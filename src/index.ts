@@ -1,13 +1,17 @@
 import express from 'express';
+
+import swapRouter from './routes/swap-api';
+import swapSettingsRouter from './routes/swap-settings';
+
 const app = express();
+
 app.use(express.json());
 
 const PORT = 3000;
 
-app.get('/ping', (_req, res) => {
-    console.log('someone pinged here');
-    res.send('pong');
-});
+// app setup
+app.use('/api', swapRouter);
+app.use('/settings', swapSettingsRouter);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

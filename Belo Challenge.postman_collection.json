@@ -1,0 +1,82 @@
+{
+	"info": {
+		"_postman_id": "9048b69a-b5b8-4d61-91b1-9e11c3baf0b2",
+		"name": "Belo Challenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "23094479"
+	},
+	"item": [
+		{
+			"name": "Get All Pairs",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:3000/api/pairs"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Quote",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"pair\": \"USDTETH\",\r\n    \"volume\": 1200,\r\n    \"operation\": \"BUY\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:3000/api/quote"
+			},
+			"response": []
+		},
+		{
+			"name": "Swap Pair",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"quote_uuid\": \"abcde\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:3000/api/swap"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Fees",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:3000/settings/pairs"
+			},
+			"response": []
+		},
+		{
+			"name": "Set Fees",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"pair\": \"USDTETH\",\r\n    \"fee\": 1.5,\r\n    \"spread\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "localhost:3000/settings/fees_spread"
+			},
+			"response": []
+		}
+	]
+}
