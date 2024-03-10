@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import express from 'express';
 
 import typeParsers from '../utils/type-parsers';
@@ -10,11 +11,11 @@ router.get('/pairs', (_req, res) => {
     res.send(pairs);
 });
 
-router.post('/quote', (req, res) => {
+router.post('/quote', async (req, res) => {
     try {
         const quoteRequest = typeParsers.toQuoteRequest(req.body);
 
-        const newQuote = quoteService.createQuote(quoteRequest);
+        const newQuote = await quoteService.createQuote(quoteRequest);
 
         res.json(newQuote);
     }

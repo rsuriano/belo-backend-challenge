@@ -16,8 +16,8 @@ export interface QuoteRequest {
 }
 
 export interface Quote extends QuoteRequest {
-    swap_uuid: string;
-    estimated_price: number;
-    expiration_seconds: number;
-    expiration_date: number; //unix timestamp, now + expiration_seconds
+    swapUuid: string;
+    estimatedPrice: number;
+    expirationSeconds: number;
+    expirationDate: number; //unix timestamp, now + expiration_seconds
 }

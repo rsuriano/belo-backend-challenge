@@ -5,14 +5,14 @@ export interface SwapRequest {
 }
 
 export interface Swap extends Quote {
-    final_price: number;
+    finalPrice: number;
     fee: number;
     spread: number;
     fulfilled: boolean;
 }
 
 export interface SwapResponse {
-    swap_uuid: string;
+    swapUuid: string;
     status: boolean;
     message?: string;
 }

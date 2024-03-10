@@ -1,7 +1,10 @@
+import dotenv from 'dotenv';
 import express from 'express';
 
 import swapRouter from './routes/swap-api';
 import swapSettingsRouter from './routes/swap-settings';
+
+dotenv.config();
 
 const app = express();
 
