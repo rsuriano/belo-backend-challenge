@@ -1,19 +1,9 @@
 // saves and patches quotes to DB
-import { Quote, QuoteRequest, PairResponse, Operation } from "../types/quote";
+import { Quote, QuoteRequest, Operation } from "../types/quote";
 import binanceSpot from "./binance-spot";
 // import db_conn from "../utils/db-conn";
 import { v4 as uuidv4 } from 'uuid';
 
-
-const getPairs = (): PairResponse => {
-    return {
-        pairs: [
-            "ETHUSDT",
-            "BTCUSDT",
-            // "USDCAAVE"
-        ]
-    };
-};
 
 // const estimateQuotePrice = async (quoteRequest: QuoteRequest) => {
 const estimateQuotePrice = async (quoteRequest: QuoteRequest) => {
@@ -124,6 +114,5 @@ const createQuote = async (quoteRequest: QuoteRequest) => {
 };
 
 export default {
-    getPairs,
     createQuote
 };

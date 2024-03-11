@@ -3,7 +3,7 @@ import express from 'express';
 
 import swapRouter from './routes/swap-api';
 import swapSettingsRouter from './routes/swap-settings';
-import { AppDataSource } from "./data-source";
+import { AppDataSource } from "./utils/data-source";
 
 dotenv.config();
 

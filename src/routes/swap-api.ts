@@ -2,12 +2,13 @@
 import express from 'express';
 
 import typeParsers from '../utils/type-parsers';
+import pairDBService from '../services/pair-db-service';
 import quoteService from '../services/quote-service';
 
 const router = express.Router();
 
-router.get('/pairs', (_req, res) => {
-    const pairs = quoteService.getPairs();
+router.get('/pairs', async (_req, res) => {
+    const pairs = await pairDBService.getPairs();
     res.send(pairs);
 });
 

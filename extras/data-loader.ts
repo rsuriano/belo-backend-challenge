@@ -1,4 +1,4 @@
-import { AppDataSource } from "../src/data-source";
+import { AppDataSource } from "../src/utils/data-source";
 import { Pair } from "../src/entity/Pair";
 import { Route } from "../src/entity/Route";
 import * as fs from "fs";
