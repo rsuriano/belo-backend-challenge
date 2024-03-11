@@ -3,19 +3,25 @@ import express from 'express';
 
 import swapRouter from './routes/swap-api';
 import swapSettingsRouter from './routes/swap-settings';
+import { AppDataSource } from "./data-source";
 
 dotenv.config();
 
+// express setup
+const PORT = 3000;
 const app = express();
-
 app.use(express.json());
 
-const PORT = 3000;
 
-// app setup
-app.use('/api', swapRouter);
-app.use('/settings', swapSettingsRouter);
+AppDataSource.initialize().then(() => {
+    console.log('Database connected successfully.');
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+    // express setup
+    app.use('/api', swapRouter);
+    app.use('/settings', swapSettingsRouter);
+
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+
+}).catch(error => console.log(error));

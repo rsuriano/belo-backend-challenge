@@ -1,7 +1,7 @@
 // saves and patches quotes to DB
 import { Quote, QuoteRequest, PairResponse, Operation } from "../types/quote";
 import binanceSpot from "./binance-spot";
-import db_conn from "../utils/db-conn";
+// import db_conn from "../utils/db-conn";
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -118,7 +118,7 @@ const createQuote = async (quoteRequest: QuoteRequest) => {
     };
 
     // TODO: save to DB
-    await db_conn.saveQuote(newQuote);
+    // await db_conn.saveQuote(newQuote);
 
     return newQuote;
 };

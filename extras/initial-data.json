@@ -1,0 +1,109 @@
+{
+    "pairs": [
+        {
+            "uuid": "31a85b23-871c-4987-913e-f502622f95f6",
+            "name": "USDTETH",
+            "createdAt": "2024-03-16T00:00:00Z"
+        },
+        {
+            "uuid": "1f213bbb-4569-4378-acf0-adedffb9cb44",
+            "name": "USDTBTC",
+            "createdAt": "2024-03-16T00:00:00Z"
+        },
+        {
+            "uuid": "04c73ecf-c073-4699-aa92-4f3f16781426",
+            "name": "USDCAAVE",
+            "createdAt": "2024-03-16T00:00:00Z"
+        }
+    ],
+    "routes": [
+        {
+            "uuid": "f27ecbda-a549-416a-95b1-a8ecaf25ad61",
+            "name": "Route for USDTETH",
+            "path": [
+                {
+                    "binancePair": "ETHUSDT",
+                    "direction": "INVERTED"
+                }
+            ],
+            "pair_uuid": "31a85b23-871c-4987-913e-f502622f95f6",
+            "created_at": "2024-03-16T00:00:01Z"
+        },
+        {
+            "uuid": "ae925b4b-a163-4592-a0c2-b8da303a5f5c",
+            "name": "Route for USDTBTC",
+            "path": [
+                {
+                    "binancePair": "BTCUSDT",
+                    "direction": "INVERTED"
+                }
+            ],
+            "pair_uuid": "1f213bbb-4569-4378-acf0-adedffb9cb44",
+            "created_at": "2024-03-16T00:00:02Z"
+        },
+        {
+            "uuid": "3b3f58c6-1bad-4af4-acf5-813fd2ae6ee7",
+            "name": "Route 1 for USDCAAVE through BNB",
+            "path": [
+                {
+                    "binancePair": "AAVEBNB",
+                    "direction": "INVERTED"
+                },
+                {
+                    "binancePair": "BNBUSDC",
+                    "direction": "INVERTED"
+                }
+            ],
+            "pair_uuid": "04c73ecf-c073-4699-aa92-4f3f16781426",
+            "created_at": "2024-03-16T00:00:03Z"
+        },
+        {
+            "uuid": "bd882a46-daf1-4293-a7f2-510e1784e482",
+            "name": "Route 2 for USDCAAVE through BTC",
+            "path": [
+                {
+                    "binancePair": "AAVEBTC",
+                    "direction": "INVERTED"
+                },
+                {
+                    "binancePair": "BTCUSDC",
+                    "direction": "INVERTED"
+                }
+            ],
+            "pair_uuid": "04c73ecf-c073-4699-aa92-4f3f16781426",
+            "created_at": "2024-03-16T00:00:04Z"
+        },
+        {
+            "uuid": "7eeac452-86c6-48bd-9a72-ac3487c7bf66",
+            "name": "Route 3 for USDCAAVE through ETH",
+            "path": [
+                {
+                    "binancePair": "AAVEETH",
+                    "direction": "INVERTED"
+                },
+                {
+                    "binancePair": "ETHUSDC",
+                    "direction": "INVERTED"
+                }
+            ],
+            "pair_uuid": "04c73ecf-c073-4699-aa92-4f3f16781426",
+            "created_at": "2024-03-16T00:00:05Z"
+        },
+        {
+            "uuid": "ac34a9c2-8f54-461e-bfe0-5d7dada04cd8",
+            "name": "Route 4 for USDCAAVE through USDT",
+            "path": [
+                {
+                    "binancePair": "AAVEUSDT",
+                    "direction": "INVERTED"
+                },
+                {
+                    "binancePair": "USDTUSDC",
+                    "direction": "INVERTED"
+                }
+            ],
+            "pair_uuid": "04c73ecf-c073-4699-aa92-4f3f16781426",
+            "created_at": "2024-03-16T00:00:06Z"
+        }
+    ]
+}

@@ -2,12 +2,6 @@
 import { Spot, RestMarketTypes } from '@binance/connector-typescript';
 import { Pair } from '../types/quote';
 
-// temporary
-// const enum binance_map {
-//     USDTETH = 'ETHUSDT',
-//     USDTBTC = 'BTCUSDT'
-// }
-
 const API_KEY = process.env.BINANCE_API_KEY;
 const API_SECRET = process.env.BINANCE_SECRET_KEY;
 const BASE_URL = 'https://testnet.binance.vision';
