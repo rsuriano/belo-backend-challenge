@@ -98,8 +98,8 @@
                     "direction": "INVERTED"
                 },
                 {
-                    "binancePair": "USDTUSDC",
-                    "direction": "INVERTED"
+                    "binancePair": "USDCUSDT",
+                    "direction": "DIRECT"
                 }
             ],
             "pair_uuid": "04c73ecf-c073-4699-aa92-4f3f16781426",
