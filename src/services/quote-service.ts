@@ -1,66 +1,26 @@
 // saves and patches quotes to DB
-import { Quote, QuoteRequest, Operation } from "../types/quote";
 import binanceSpot from "./binance-spot";
-// import db_conn from "../utils/db-conn";
-import { v4 as uuidv4 } from 'uuid';
+import { Route } from "../entity";
+import { QuoteRequest, Operation, RouteEstimation, RouteSegment, Direction } from "../types/quote";
+import pairDBService from "./pair-db-service";
+import quoteDbService from "./quote-db-service";
 
-
-// const estimateQuotePrice = async (quoteRequest: QuoteRequest) => {
-const estimateQuotePrice = async (quoteRequest: QuoteRequest) => {
+const estimatePairPrice = (quoteRequest: QuoteRequest) => async (pair: RouteSegment): Promise<number> => {
     try {
 
         // get order book for pair
-        const fullOrderBook = await binanceSpot.getOrderBook(quoteRequest.pair);
-        // const fullOrderBook = {
-        //     "lastUpdateId": 18287072,
-        //     "bids": [
-        //         [
-        //             "3931.18000000",
-        //             "0.11960000"
-        //         ],
-        //         [
-        //             "3931.07000000",
-        //             "0.11330000"
-        //         ],
-        //         [
-        //             "3931.00000000",
-        //             "0.10430000"
-        //         ],
-        //         [
-        //             "3930.94000000",
-        //             "0.06870000"
-        //         ],
-        //         [
-        //             "3930.15000000",
-        //             "0.07530000"
-        //         ]
-        //     ],
-        //     "asks": [
-        //         [
-        //             "3931.19000000",
-        //             "0.07380000"
-        //         ],
-        //         [
-        //             "3931.23000000",
-        //             "0.10690000"
-        //         ],
-        //         [
-        //             "3931.25000000",
-        //             "0.12340000"
-        //         ],
-        //         [
-        //             "3931.26000000",
-        //             "0.09040000"
-        //         ],
-        //         [
-        //             "3931.31000000",
-        //             "0.07250000"
-        //         ]
-        //     ]
-        // };
+        const fullOrderBook = await binanceSpot.getOrderBook(pair.binancePair);
+        let orderBook: string[][];
 
-        const orderBook: string[][] =
-            (quoteRequest.operation == Operation.BUY) ? fullOrderBook.asks : fullOrderBook.bids;
+        if (pair.direction == Direction.DIRECT) {
+            orderBook = (quoteRequest.operation == Operation.BUY) ?
+                fullOrderBook.asks : fullOrderBook.bids;
+        }
+        else { // invert direction if needed
+            orderBook = (quoteRequest.operation == Operation.BUY) ?
+                fullOrderBook.bids : fullOrderBook.asks;
+        }
+
 
         // // TODO: check if volume is ok to estimate price
         // let volume: number = 0;
@@ -81,9 +41,6 @@ const estimateQuotePrice = async (quoteRequest: QuoteRequest) => {
         );
         priceAvg = priceAvg / orderBook.length;
 
-        // TODO: add fee and spread
-        // let priceWithFees = priceAvg + fee + spread
-
         return priceAvg;
 
     }
@@ -94,23 +51,68 @@ const estimateQuotePrice = async (quoteRequest: QuoteRequest) => {
 
 };
 
+const estimatePathPrice = (quoteRequest: QuoteRequest) => async (route: Route): Promise<RouteEstimation> => {
+
+    // calculate price for each segment in path
+    const estimatePrice = estimatePairPrice(quoteRequest);
+
+    const pairPrices = await Promise.all(route.path.map(estimatePrice));
+
+    pairPrices.reduce((prev, curr) => { return prev * Number(curr); }, 1);
+
+    return {
+        route: route,
+        price: pairPrices[0]
+    };
+};
+
+const estimateRoutePrice = async (routes: Route[], quoteRequest: QuoteRequest): Promise<RouteEstimation> => {
+
+    // calculate price for each route
+    const estimatePrice = estimatePathPrice(quoteRequest);
+
+    const routePrices = await Promise.all(routes.map(estimatePrice));
+
+    // get cheapest route and return it
+    routePrices.reduce(
+        (prev: RouteEstimation, curr: RouteEstimation) => {
+            return curr.price < prev.price ? curr : prev;
+        },
+        routePrices[0]
+    );
+
+    return routePrices[0];
+};
+
 const createQuote = async (quoteRequest: QuoteRequest) => {
 
+    // get pair's available routes
+    const pair = await pairDBService.getPairByName(quoteRequest.pair);
+
+    if (!pair) {
+        throw Error("Pair not found");
+    }
+
+    // calculate price for all routes and return the cheapest
+    const bestRoute = await estimateRoutePrice(pair.routes, quoteRequest);
+
+    // TODO: add fee and spread
+    // let priceWithFees = priceAvg + fee + spread
+
     // assemble newQuote object
-    const newQuote: Quote = {
-        pair: quoteRequest.pair,
+    const newQuote = {
+        pair: pair,
         volume: quoteRequest.volume,
         operation: quoteRequest.operation,
-        swapUuid: uuidv4(),
-        estimatedPrice: await estimateQuotePrice(quoteRequest),
-        expirationSeconds: Number(process.env.EXPIRATION_TIME),
-        expirationDate: Date.now() + Number(process.env.EXPIRATION_TIME) * 1000
+        route: bestRoute.route,
+        estimatedPrice: bestRoute.price,
+        expirationSeconds: Number(process.env.EXPIRATION_TIME)
     };
 
-    // TODO: save to DB
-    // await db_conn.saveQuote(newQuote);
+    // save to DB
+    const newDBquote = quoteDbService.createQuote(newQuote);
 
-    return newQuote;
+    return newDBquote;
 };
 
 export default {

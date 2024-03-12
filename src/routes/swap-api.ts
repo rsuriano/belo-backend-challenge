@@ -1,9 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from 'express';
+import { validate } from "class-validator";
+import { plainToClass } from "class-transformer";
 
-import typeParsers from '../utils/type-parsers';
+// import typeParsers from '../utils/type-parsers';
 import pairDBService from '../services/pair-db-service';
 import quoteService from '../services/quote-service';
+import { QuoteRequest } from '../types/quote';
 
 const router = express.Router();
 
@@ -14,11 +18,16 @@ router.get('/pairs', async (_req, res) => {
 
 router.post('/quote', async (req, res) => {
     try {
-        const quoteRequest = typeParsers.toQuoteRequest(req.body);
+        const quoteRequest = plainToClass(QuoteRequest, req.body);
+        const errors = await validate(quoteRequest);
+
+        if (errors.length > 0) {
+            res.status(400).json({ errors });
+        }
 
         const newQuote = await quoteService.createQuote(quoteRequest);
 
-        res.json(newQuote);
+        res.status(201).json(newQuote);
     }
 
     catch (error: unknown) {

@@ -2,8 +2,8 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    CreateDateColumn,
-    OneToMany
+    OneToMany,
+    BeforeInsert
 } from "typeorm";
 
 import { Route } from "./Route";
@@ -17,10 +17,15 @@ export class Pair {
     @Column()
     name: string;
 
-    @OneToMany(() => Route, (route) => route.pair)
+    @OneToMany(() => Route, (route) => route.pair, { eager: true })
     routes: Route[];
 
-    @CreateDateColumn()
-    createdAt: Date;
+    @Column({ type: "float" })
+    createdAt: number;
+
+    @BeforeInsert()
+    setDates() {
+        this.createdAt = Date.now() / 1000;
+    }
 
 }

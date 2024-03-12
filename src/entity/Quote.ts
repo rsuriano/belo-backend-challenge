@@ -2,7 +2,6 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    CreateDateColumn,
     ManyToOne,
     OneToOne,
     JoinColumn,
@@ -18,9 +17,6 @@ export class Quote {
     @PrimaryGeneratedColumn("uuid")
     uuid: string;
 
-    @Column()
-    name: string;
-
     @ManyToOne(() => Pair)
     @JoinColumn({ name: 'pair_uuid' })
     pair: Pair;
@@ -31,29 +27,34 @@ export class Quote {
     @Column()
     operation: string;
 
-    @Column()
+    @Column({ type: "float" })
     estimatedPrice: number;
 
     @OneToOne(() => Route)
     @JoinColumn({ name: 'route_uuid' })
     route: Route;
 
+    @Column()
+    expirationSeconds: number;
+
     @Column({ default: false })
     used: boolean;
 
-    @CreateDateColumn()
-    createdAt: Date;
+    @Column({ type: "float" })
+    createdAt: number;
 
-    @Column()
-    expiresAt: Date;
+    @Column({ type: "float" })
+    expiresAt: number;
 
     @BeforeInsert()
-    setExpiresAt() {
+    setDates() {
         const offsetInSeconds = parseInt(process.env.EXPIRATION_TIME as string, 10);
-        const expiresAt = new Date();
-        expiresAt.setSeconds(expiresAt.getSeconds() + offsetInSeconds);
+
+        const now = Date.now() / 1000;
+        const expiresAt = now + offsetInSeconds;
+
+        this.createdAt = now;
         this.expiresAt = expiresAt;
     }
-
 
 }

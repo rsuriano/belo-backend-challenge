@@ -2,9 +2,9 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    CreateDateColumn,
     OneToOne,
-    JoinColumn
+    JoinColumn,
+    BeforeInsert
 } from "typeorm";
 
 import { Quote } from "./Quote";
@@ -19,13 +19,18 @@ export class Swap {
     @JoinColumn({ name: 'quote_uuid' })
     quote: Quote;
 
-    @Column()
+    @Column({ type: "float" })
     finalPrice: number;
 
-    @Column()
+    @Column({ type: "float" })
     binanceFee: number;
 
-    @CreateDateColumn()
-    createdAt: Date;
+    @Column({ type: "float" })
+    createdAt: number;
+
+    @BeforeInsert()
+    setDates() {
+        this.createdAt = Date.now() / 1000;
+    }
 
 }

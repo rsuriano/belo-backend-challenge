@@ -5,13 +5,21 @@ import { Pair } from "../entity";
 import { PairResponse } from "../types/quote";
 
 const getPairs = async (): Promise<PairResponse> => {
-    const pairs = await AppDataSource.manager.find(Pair);
-    console.log(pairs);
+    const pairs = await AppDataSource.manager.find(Pair.name);
     return {
-        pairs: pairs.map((pair) => pair.name)
+        pairs: pairs as unknown as string[]
     };
 };
 
+const getPairByName = async (pairName: string): Promise<Pair | null> => {
+    const pair = await AppDataSource.manager.findOneBy(Pair, {
+        name: pairName,
+    });
+
+    return pair;
+};
+
 export default {
-    getPairs
+    getPairs,
+    getPairByName
 };

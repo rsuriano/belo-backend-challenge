@@ -2,12 +2,13 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    CreateDateColumn,
     ManyToOne,
-    JoinColumn
+    JoinColumn,
+    BeforeInsert
 } from "typeorm";
 
 import { Pair } from "./Pair";
+import { RouteSegment } from "../types/quote";
 
 @Entity()
 export class Route {
@@ -19,16 +20,18 @@ export class Route {
     name: string;
 
     @Column("simple-json")
-    path: {
-        binancePair: string;
-        direction: "DIRECT" | "INVERTED";
-    }[];
+    path: RouteSegment[];
 
     @ManyToOne(() => Pair, (pair) => pair.routes)
     @JoinColumn({ name: 'pair_uuid' })
     pair: Pair;
 
-    @CreateDateColumn()
-    created_at: Date;
+    @Column({ type: "float" })
+    createdAt: number;
+
+    @BeforeInsert()
+    setDates() {
+        this.createdAt = Date.now() / 1000;
+    }
 
 }

@@ -1,51 +1,31 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 // database connector
-import { Quote } from "../types/quote";
-import { readFile, writeFile } from 'fs/promises';
+import { AppDataSource } from "../utils/data-source";
 
+import { QuoteCreate } from "../types/quote";
+import { Quote } from '../entity';
 
-async function saveQuote(newQuote: Quote): Promise<void> {
-    try {
-        // Load the existing quotes JSON file
-        const data = await readFile('quotes.json', { encoding: 'utf8' });
-        const quotes: Record<string, Quote> = JSON.parse(data);
+const entityManager = AppDataSource.manager;
 
-        // Append the new quote
-        quotes[newQuote.swapUuid] = newQuote;
+const getQuoteByUuid = async (quoteUuid: string): Promise<Quote | null> => {
+    const quote = await entityManager.findOneBy(Quote, {
+        uuid: quoteUuid,
+    });
 
-        // Save the updated quotes back to the JSON file
-        await writeFile('quotes.json', JSON.stringify(quotes, null, 2), { encoding: 'utf8' });
-        console.log('Quote saved successfully.');
-    } catch (error) {
-        console.error('Failed to save the quote:', error);
-    }
-}
+    return quote;
+};
 
-async function getQuote(quoteId: string): Promise<Quote | undefined> {
-    try {
-        // Load the existing quotes JSON file
-        const data = await readFile('quotes.json', { encoding: 'utf8' });
-        const quotes: Record<string, Quote> = JSON.parse(data);
+const createQuote = async (newQuote: QuoteCreate) => {
+    const quote = entityManager.create(
+        Quote, { ...newQuote }
+    );
 
-        // Retrieve the quote by its UUID
-        const quote = quotes[quoteId];
-
-        if (quote) {
-            console.log('Quote found:', quote);
-            return quote;
-        } else {
-            console.log('Quote not found.');
-            return undefined;
-        }
-    } catch (error) {
-        console.error('Failed to retrieve the quote:', error);
-        return undefined;
-    }
-}
-
+    await entityManager.save(Quote, quote);
+    return quote;
+};
 
 export default {
-    saveQuote,
-    getQuote
+    getQuoteByUuid,
+    createQuote
 };

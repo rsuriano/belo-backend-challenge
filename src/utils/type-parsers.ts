@@ -1,26 +1,26 @@
-import utils from "./utils";
-import { QuoteRequest } from "../types/quote";
+// import utils from "./utils";
+// import { QuoteRequest } from "../types/quote";
 
-const toQuoteRequest = (object: unknown): QuoteRequest => {
+// const toQuoteRequest = (object: unknown): QuoteRequest => {
 
-    if (!object || typeof object !== 'object') {
-        throw new Error('Incorrect or missing data');
-    }
+//     if (!object || typeof object !== 'object') {
+//         throw new Error('Incorrect or missing data');
+//     }
 
-    if ('pair' in object && 'volume' in object && 'operation' in object) {
-        const newQuote: QuoteRequest = {
-            pair: utils.parsePair(object.pair),
-            volume: utils.parseVolume(object.volume),
-            operation: utils.parseOperation(object.operation),
-        };
+//     if ('pair' in object && 'volume' in object && 'operation' in object) {
+//         const newQuote: QuoteRequest = {
+//             pair: utils.parsePair(object.pair),
+//             volume: utils.parseVolume(object.volume),
+//             operation: utils.parseOperation(object.operation),
+//         };
 
-        return newQuote;
-    }
+//         return newQuote;
+//     }
 
-    throw new Error('Field missing');
-};
+//     throw new Error('Field missing');
+// };
 
 
-export default {
-    toQuoteRequest
-};
+// export default {
+//     toQuoteRequest
+// };
