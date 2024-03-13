@@ -7,10 +7,15 @@ import quoteDbService from "./quote-db-service";
 
 const ORDER_BOOK_LIMITS = [100, 250, 700, 1900, 5000];
 
-const estimatePairPrice = (quoteRequest: QuoteRequest) => async (segment: RouteSegment): Promise<number> => {
+const estimatePairPrice = (quoteRequest: QuoteRequest) => async (lastSegment: RouteSegment, segment: RouteSegment): Promise<RouteSegment> => {
     try {
-        console.log(`Estimating price for pair ${quoteRequest.pair}, volume ${quoteRequest.volume}, ${quoteRequest.operation}`);
+        console.log(`Estimating price for pair ${segment.binancePair}, volume ${quoteRequest.volume}, ${quoteRequest.operation}`);
 
+        if (!('volume' in lastSegment && 'price' in lastSegment)) {
+            throw Error('Error in path price estimation');
+        }
+
+        const currentSegmentVolume = Number(lastSegment.volume) * Number(lastSegment.price);
         let orderBook: number[][] = [];
         let volume: number = 0;
 
@@ -25,8 +30,8 @@ const estimatePairPrice = (quoteRequest: QuoteRequest) => async (segment: RouteS
             for (const item of orderBook) {
                 volume += Number(item[1]);
 
-                if (volume >= quoteRequest.volume) {
-                    console.log(`Matched volume at depth ${ORDER_BOOK_LIMITS[i]}`);
+                if (volume >= currentSegmentVolume) {
+                    console.log(`${segment.binancePair} - Matched volume at depth ${ORDER_BOOK_LIMITS[i]}`);
                     break liquidityCheck;
                 }
             }
@@ -34,8 +39,8 @@ const estimatePairPrice = (quoteRequest: QuoteRequest) => async (segment: RouteS
         }
 
         // throw error if there's no volume for estimation
-        if (volume <= quoteRequest.volume) {
-            const low_volume_msg = `Not enough volume in market: ${volume}. try again with a lower volume`;
+        if (volume <= currentSegmentVolume) {
+            const low_volume_msg = `Not enough volume in pair ${segment.binancePair}: ${volume}. try again with a lower volume`;
             console.error(low_volume_msg);
             throw Error(low_volume_msg);
         }
@@ -46,7 +51,11 @@ const estimatePairPrice = (quoteRequest: QuoteRequest) => async (segment: RouteS
         );
         priceAvg = priceAvg / orderBook.length;
 
-        return priceAvg;
+        return {
+            ...segment,
+            volume: currentSegmentVolume,
+            price: Number(lastSegment.price) * priceAvg
+        };
 
     }
     catch (error: unknown) {
@@ -56,25 +65,26 @@ const estimatePairPrice = (quoteRequest: QuoteRequest) => async (segment: RouteS
 
 };
 
-const estimatePathPrice = (quoteRequest: QuoteRequest) => async (route: Route): Promise<RouteEstimation> => {
+const estimateRoutePrice = (quoteRequest: QuoteRequest) => async (route: Route): Promise<RouteEstimation> => {
 
     // calculate price for each segment in path
     const estimatePrice = estimatePairPrice(quoteRequest);
 
-    const pairPrices = await Promise.all(route.path.map(estimatePrice));
-
-    pairPrices.reduce((prev, curr) => { return prev * Number(curr); }, 1);
+    let initialSegment: RouteSegment = { binancePair: 'ROOT', direction: 'DIRECT', volume: quoteRequest.volume, price: 1 };
+    for (const segment of route.path) {
+        initialSegment = await estimatePrice(initialSegment, segment);
+    }
 
     return {
         route: route,
-        price: pairPrices[0]
+        price: Number(initialSegment.price)
     };
 };
 
-const estimateRoutePrice = async (routes: Route[], quoteRequest: QuoteRequest): Promise<RouteEstimation> => {
+const getCheapestRoute = async (routes: Route[], quoteRequest: QuoteRequest): Promise<RouteEstimation> => {
 
     // calculate price for each route
-    const estimatePrice = estimatePathPrice(quoteRequest);
+    const estimatePrice = estimateRoutePrice(quoteRequest);
 
     const routePrices = await Promise.all(routes.map(estimatePrice));
 
@@ -99,7 +109,7 @@ const createQuote = async (quoteRequest: QuoteRequest) => {
     }
 
     // calculate price for all routes and return the cheapest
-    const bestRoute = await estimateRoutePrice(pair.routes, quoteRequest);
+    const bestRoute = await getCheapestRoute(pair.routes, quoteRequest);
 
     // TODO: add fee and spread
     // let priceWithFees = priceAvg + fee + spread

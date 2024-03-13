@@ -8,8 +8,8 @@ const BASE_URL = 'https://testnet.binance.vision';
 
 const client = new Spot(API_KEY, API_SECRET, { baseURL: BASE_URL });
 
-const adjustOrderBook = (orderBook: RestMarketTypes.orderBookResponse, direction: Direction): FormattedOrderBook => {
-    if (direction == Direction.INVERTED) {
+const adjustOrderBook = (orderBook: RestMarketTypes.orderBookResponse, direction: string): FormattedOrderBook => {
+    if (direction == String(Direction.INVERTED)) {
         return {
             lastUpdateId: orderBook.lastUpdateId,
             bids: orderBook.asks.map(([price, volume]) => [1 / Number(price), Number(volume) * Number(price)]),
