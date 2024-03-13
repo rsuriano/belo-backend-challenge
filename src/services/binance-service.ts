@@ -1,6 +1,8 @@
 // interfaces with binance
-import { Spot, RestMarketTypes } from '@binance/connector-typescript';
+import { Spot, RestMarketTypes, OrderType, RestTradeTypes } from '@binance/connector-typescript';
 import { RouteSegment, Direction, Operation, FormattedOrderBook } from '../types/quote';
+import { Quote } from '../entity';
+import utils from '../utils/utils';
 
 const API_KEY = process.env.BINANCE_API_KEY;
 const API_SECRET = process.env.BINANCE_SECRET_KEY;
@@ -54,10 +56,40 @@ const getOrderBookProcessed = async (segment: RouteSegment, operation: Operation
     return orderBook;
 };
 
-// const executeSwap = () => {
-//     ...
-// };
+// const executeSwap = async (quote: Quote): Promise<(Record<string, never> | RestTradeTypes.testNewOrderResponse)[]> => {
+const executeSwap = async (quote: Quote) => {
+    try {
+        // const status: (Record<string, never> | RestTradeTypes.testNewOrderResponse )[] = [];
+        const status = [];
+        const quantity = quote.volume;
+
+        for (const pair of quote.route.path) {
+
+            const options: RestTradeTypes.testNewOrderOptions = {
+                quantity: quantity
+            };
+
+            const side = utils.getSide(quote.operation, pair.direction);
+            // const testOrder = await client.testNewOrder(pair.binancePair, side, OrderType.MARKET, options);
+            const testOrder = await client.newOrder(pair.binancePair, side, OrderType.MARKET, options);
+
+            status.push(testOrder);
+
+            // update volume according to last price
+
+        }
+
+        console.log(status);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return status;
+    }
+    catch (err) {
+        console.error(err);
+        throw err;
+    }
+};
 
 export default {
-    getOrderBookProcessed
+    getOrderBookProcessed,
+    executeSwap
 };

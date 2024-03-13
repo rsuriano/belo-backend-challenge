@@ -1,7 +1,7 @@
 // saves and patches quotes to DB
-import binanceSpot from "./binance-spot";
-import { Route } from "../entity";
-import { QuoteRequest, RouteEstimation, RouteSegment } from "../types/quote";
+import binanceAPI from "./binance-service";
+import { Quote, Route } from "../entity";
+import { Direction, QuoteRequest, RouteEstimation, RouteSegment } from "../types/quote";
 import pairDBService from "./pair-db-service";
 import quoteDbService from "./quote-db-service";
 
@@ -23,7 +23,7 @@ const estimatePairPrice = (quoteRequest: QuoteRequest) => async (lastSegment: Ro
         liquidityCheck: for (let i = 0; i < ORDER_BOOK_LIMITS.length; i++) {
 
             // get order book (only bid or ask side depending on operation)
-            orderBook = await binanceSpot.getOrderBookProcessed(segment, quoteRequest.operation, ORDER_BOOK_LIMITS[i]);
+            orderBook = await binanceAPI.getOrderBookProcessed(segment, quoteRequest.operation, ORDER_BOOK_LIMITS[i]);
 
             // check if volume is enough for estimation
             volume = 0;
@@ -70,7 +70,7 @@ const estimateRoutePrice = (quoteRequest: QuoteRequest) => async (route: Route):
     // calculate price for each segment in path
     const estimatePrice = estimatePairPrice(quoteRequest);
 
-    let initialSegment: RouteSegment = { binancePair: 'ROOT', direction: 'DIRECT', volume: quoteRequest.volume, price: 1 };
+    let initialSegment: RouteSegment = { binancePair: 'ROOT', direction: Direction.DIRECT, volume: quoteRequest.volume, price: 1 };
     for (const segment of route.path) {
         initialSegment = await estimatePrice(initialSegment, segment);
     }
@@ -88,7 +88,7 @@ const getCheapestRoute = async (routes: Route[], quoteRequest: QuoteRequest): Pr
 
     const routePrices = await Promise.all(routes.map(estimatePrice));
 
-    console.log(routePrices.map((item) => { return `${item.route.name}: ${item.price}`; }));
+    console.log(routePrices.map((item) => { return `${item.route.name}: ${Math.round(item.price * 100) / 100}`; }));
 
     // get cheapest route and return it
     const cheapestRoute = routePrices.reduce(
@@ -98,11 +98,11 @@ const getCheapestRoute = async (routes: Route[], quoteRequest: QuoteRequest): Pr
         routePrices[0]
     );
 
-    console.log(`Cheapest route was ${cheapestRoute.route.name}: ${cheapestRoute.price}`);
+    console.log(`Cheapest route was "${cheapestRoute.route.name}": $${Math.round(cheapestRoute.price * 100) / 100}`);
     return cheapestRoute;
 };
 
-const createQuote = async (quoteRequest: QuoteRequest) => {
+const createQuote = async (quoteRequest: QuoteRequest): Promise<Quote> => {
 
     // get pair's available routes
     const pair = await pairDBService.getPairByName(quoteRequest.pair);

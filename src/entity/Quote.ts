@@ -9,6 +9,7 @@ import {
 
 import { Pair } from "./Pair";
 import { Route } from "./Route";
+import { Operation } from "../types/quote";
 
 @Entity()
 export class Quote {
@@ -24,12 +25,12 @@ export class Quote {
     volume: number;
 
     @Column()
-    operation: string;
+    operation: Operation;
 
     @Column({ type: "float" })
     estimatedPrice: number;
 
-    @ManyToOne(() => Route, (route) => route.uuid)
+    @ManyToOne(() => Route, (route) => route.uuid, { eager: true })
     @JoinColumn({ name: 'route_uuid' })
     route: Route;
 

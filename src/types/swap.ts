@@ -1,6 +1,6 @@
 import { Quote } from "./quote";
 
-export interface SwapRequest {
+export class SwapRequest {
     quote_uuid: string;
 }
 

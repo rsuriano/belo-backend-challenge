@@ -13,7 +13,7 @@ export enum Direction {
 // this goes in route type
 export interface RouteSegment {
     binancePair: string;
-    direction: 'DIRECT' | 'INVERTED';
+    direction: Direction;
     volume?: number,
     price?: number
 }
