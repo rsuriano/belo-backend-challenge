@@ -9,7 +9,7 @@ const ORDER_BOOK_LIMITS = [100, 250, 700, 1900, 5000];
 
 const estimatePairPrice = (quoteRequest: QuoteRequest) => async (lastSegment: RouteSegment, segment: RouteSegment): Promise<RouteSegment> => {
     try {
-        console.log(`Estimating price for pair ${segment.binancePair}, volume ${quoteRequest.volume}, ${quoteRequest.operation}`);
+        // console.log(`Estimating price for pair ${segment.binancePair}, volume ${quoteRequest.volume}, ${quoteRequest.operation}`);
 
         if (!('volume' in lastSegment && 'price' in lastSegment)) {
             throw Error('Error in path price estimation');
@@ -31,7 +31,7 @@ const estimatePairPrice = (quoteRequest: QuoteRequest) => async (lastSegment: Ro
                 volume += Number(item[1]);
 
                 if (volume >= currentSegmentVolume) {
-                    console.log(`${segment.binancePair} - Matched volume at depth ${ORDER_BOOK_LIMITS[i]}`);
+                    // console.log(`${segment.binancePair} - Matched volume at depth ${ORDER_BOOK_LIMITS[i]}`);
                     break liquidityCheck;
                 }
             }
@@ -88,15 +88,18 @@ const getCheapestRoute = async (routes: Route[], quoteRequest: QuoteRequest): Pr
 
     const routePrices = await Promise.all(routes.map(estimatePrice));
 
+    console.log(routePrices.map((item) => { return `${item.route.name}: ${item.price}`; }));
+
     // get cheapest route and return it
-    routePrices.reduce(
+    const cheapestRoute = routePrices.reduce(
         (prev: RouteEstimation, curr: RouteEstimation) => {
             return curr.price < prev.price ? curr : prev;
         },
         routePrices[0]
     );
 
-    return routePrices[0];
+    console.log(`Cheapest route was ${cheapestRoute.route.name}: ${cheapestRoute.price}`);
+    return cheapestRoute;
 };
 
 const createQuote = async (quoteRequest: QuoteRequest) => {
