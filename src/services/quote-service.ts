@@ -1,39 +1,44 @@
 // saves and patches quotes to DB
 import binanceSpot from "./binance-spot";
 import { Route } from "../entity";
-import { QuoteRequest, Operation, RouteEstimation, RouteSegment, Direction } from "../types/quote";
+import { QuoteRequest, RouteEstimation, RouteSegment } from "../types/quote";
 import pairDBService from "./pair-db-service";
 import quoteDbService from "./quote-db-service";
 
-const estimatePairPrice = (quoteRequest: QuoteRequest) => async (pair: RouteSegment): Promise<number> => {
+const ORDER_BOOK_LIMITS = [100, 250, 700, 1900, 5000];
+
+const estimatePairPrice = (quoteRequest: QuoteRequest) => async (segment: RouteSegment): Promise<number> => {
     try {
+        console.log(`Estimating price for pair ${quoteRequest.pair}, volume ${quoteRequest.volume}, ${quoteRequest.operation}`);
 
-        // get order book for pair
-        const fullOrderBook = await binanceSpot.getOrderBook(pair.binancePair);
-        let orderBook: string[][];
+        let orderBook: number[][] = [];
+        let volume: number = 0;
 
-        if (pair.direction == Direction.DIRECT) {
-            orderBook = (quoteRequest.operation == Operation.BUY) ?
-                fullOrderBook.asks : fullOrderBook.bids;
+        // check if volume is ok to estimate price, if not repeat process with a higher depth
+        liquidityCheck: for (let i = 0; i < ORDER_BOOK_LIMITS.length; i++) {
+
+            // get order book (only bid or ask side depending on operation)
+            orderBook = await binanceSpot.getOrderBookProcessed(segment, quoteRequest.operation, ORDER_BOOK_LIMITS[i]);
+
+            // check if volume is enough for estimation
+            volume = 0;
+            for (const item of orderBook) {
+                volume += Number(item[1]);
+
+                if (volume >= quoteRequest.volume) {
+                    console.log(`Matched volume at depth ${ORDER_BOOK_LIMITS[i]}`);
+                    break liquidityCheck;
+                }
+            }
+
         }
-        else { // invert direction if needed
-            orderBook = (quoteRequest.operation == Operation.BUY) ?
-                fullOrderBook.bids : fullOrderBook.asks;
+
+        // throw error if there's no volume for estimation
+        if (volume <= quoteRequest.volume) {
+            const low_volume_msg = `Not enough volume in market: ${volume}. try again with a lower volume`;
+            console.error(low_volume_msg);
+            throw Error(low_volume_msg);
         }
-
-
-        // // TODO: check if volume is ok to estimate price
-        // let volume: number = 0;
-        // for (const item of orderBook) {
-        //     volume += Number(item[1]);
-
-        //     if (volume >= quoteRequest.volume) {
-        //         break;
-        //     }
-        // }
-        // if (volume < quoteRequest.volume) {
-        //     (go again with a higher limit)
-        // }
 
         // estimate price
         let priceAvg = orderBook.reduce(

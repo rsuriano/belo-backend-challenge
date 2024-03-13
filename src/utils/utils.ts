@@ -36,7 +36,6 @@ const parseOperation = (operation: unknown): Operation => {
     return operation;
 };
 
-
 export default {
     parsePair,
     parseVolume,

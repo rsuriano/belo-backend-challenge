@@ -2,17 +2,17 @@
     "pairs": [
         {
             "uuid": "31a85b23-871c-4987-913e-f502622f95f6",
-            "name": "USDTETH",
+            "name": "ETHUSDT",
             "createdAt": "2024-03-16T00:00:00Z"
         },
         {
             "uuid": "1f213bbb-4569-4378-acf0-adedffb9cb44",
-            "name": "USDTBTC",
+            "name": "BTCUSDT",
             "createdAt": "2024-03-16T00:00:00Z"
         },
         {
             "uuid": "04c73ecf-c073-4699-aa92-4f3f16781426",
-            "name": "USDCAAVE",
+            "name": "AAVEUSDC",
             "createdAt": "2024-03-16T00:00:00Z"
         }
     ],
@@ -23,7 +23,7 @@
             "path": [
                 {
                     "binancePair": "ETHUSDT",
-                    "direction": "INVERTED"
+                    "direction": "DIRECT"
                 }
             ],
             "pair_uuid": "31a85b23-871c-4987-913e-f502622f95f6",
@@ -35,7 +35,7 @@
             "path": [
                 {
                     "binancePair": "BTCUSDT",
-                    "direction": "INVERTED"
+                    "direction": "DIRECT"
                 }
             ],
             "pair_uuid": "1f213bbb-4569-4378-acf0-adedffb9cb44",
@@ -47,11 +47,11 @@
             "path": [
                 {
                     "binancePair": "AAVEBNB",
-                    "direction": "INVERTED"
+                    "direction": "DIRECT"
                 },
                 {
                     "binancePair": "BNBUSDC",
-                    "direction": "INVERTED"
+                    "direction": "DIRECT"
                 }
             ],
             "pair_uuid": "04c73ecf-c073-4699-aa92-4f3f16781426",
@@ -63,11 +63,11 @@
             "path": [
                 {
                     "binancePair": "AAVEBTC",
-                    "direction": "INVERTED"
+                    "direction": "DIRECT"
                 },
                 {
                     "binancePair": "BTCUSDC",
-                    "direction": "INVERTED"
+                    "direction": "DIRECT"
                 }
             ],
             "pair_uuid": "04c73ecf-c073-4699-aa92-4f3f16781426",
@@ -79,11 +79,11 @@
             "path": [
                 {
                     "binancePair": "AAVEETH",
-                    "direction": "INVERTED"
+                    "direction": "DIRECT"
                 },
                 {
                     "binancePair": "ETHUSDC",
-                    "direction": "INVERTED"
+                    "direction": "DIRECT"
                 }
             ],
             "pair_uuid": "04c73ecf-c073-4699-aa92-4f3f16781426",
@@ -95,11 +95,11 @@
             "path": [
                 {
                     "binancePair": "AAVEUSDT",
-                    "direction": "INVERTED"
+                    "direction": "DIRECT"
                 },
                 {
                     "binancePair": "USDCUSDT",
-                    "direction": "DIRECT"
+                    "direction": "INVERTED"
                 }
             ],
             "pair_uuid": "04c73ecf-c073-4699-aa92-4f3f16781426",

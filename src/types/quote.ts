@@ -1,7 +1,5 @@
 import { Route as RouteDB, Pair as PairDB } from "../entity";
 
-export type Pair = string;
-
 export enum Operation {
     BUY = 'BUY',
     SELL = 'SELL',
@@ -14,11 +12,11 @@ export enum Direction {
 
 export interface RouteSegment {
     binancePair: string;
-    direction: 'DIRECT' | 'INVERTED';
+    direction: Direction;
 }
 
 export interface PairResponse {
-    pairs: Pair[];
+    pairs: string[];
 }
 
 export class QuoteRequest {
@@ -28,8 +26,8 @@ export class QuoteRequest {
 }
 
 export interface RouteEstimation {
-    route: RouteDB,
-    price: number
+    route: RouteDB;
+    price: number;
 }
 
 export interface QuoteCreate {
@@ -44,4 +42,10 @@ export interface Quote extends QuoteCreate {
     uuid: string;
     createdAt: number;
     expiresAt: number; // now + expiration_seconds
+}
+
+export interface FormattedOrderBook {
+    lastUpdateId: number;
+    bids: number[][];
+    asks: number[][];
 }

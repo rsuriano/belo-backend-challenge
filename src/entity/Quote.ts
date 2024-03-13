@@ -3,7 +3,6 @@ import {
     PrimaryGeneratedColumn,
     Column,
     ManyToOne,
-    OneToOne,
     JoinColumn,
     BeforeInsert
 } from "typeorm";
@@ -30,7 +29,7 @@ export class Quote {
     @Column({ type: "float" })
     estimatedPrice: number;
 
-    @OneToOne(() => Route)
+    @ManyToOne(() => Route, (route) => route.uuid)
     @JoinColumn({ name: 'route_uuid' })
     route: Route;
 
