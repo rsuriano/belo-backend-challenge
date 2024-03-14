@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 
 import { Quote } from "./Quote";
+import { BinanceSwapResponse } from "../types/swap";
 
 @Entity()
 export class Swap {
@@ -26,7 +27,7 @@ export class Swap {
     binanceFee: number;
 
     @Column("simple-json")
-    binanceResponse: object[];
+    binanceResponse: BinanceSwapResponse[];
 
     @Column({ type: "float" })
     createdAt: number;

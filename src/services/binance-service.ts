@@ -59,6 +59,9 @@ const getOrderBookProcessed = async (segment: RouteSegment, operation: Operation
 
 const executeSwap = async (quote: Quote): Promise<BinanceSwapResponse[]> => {
     try {
+        const routeForLog = quote.route.path.map((item) => (`[${item.binancePair}(${item.direction})]`));
+        console.log(`Starting to execute swap: ${quote.pair.name}: ${routeForLog.join('->')} ...`);
+
         const newOrders: BinanceSwapResponse[] = [];
         let quantity = quote.volume;
 
@@ -68,8 +71,10 @@ const executeSwap = async (quote: Quote): Promise<BinanceSwapResponse[]> => {
             // set quantity and side
             const side = utils.getSide(quote.operation, pair.direction);
             const options: RestTradeTypes.testNewOrderOptions = {
-                quantity: quantity
+                quoteOrderQty: quantity
             };
+
+            console.log(`\tswap: ${pair.binancePair} -> ${quantity}...`);
 
             let newOrder = await client.newOrder(pair.binancePair, side, OrderType.MARKET, options);
 
@@ -100,11 +105,14 @@ const executeSwap = async (quote: Quote): Promise<BinanceSwapResponse[]> => {
             };
             newOrders.push(newOrderFormatted);
 
+            console.log(`\tfinished swap: ${JSON.stringify(newOrderFormatted)}`);
+
             // update volume according to this pair's price
-            quantity = quantity * Number(newOrder.cummulativeQuoteQty);
+            quantity = newOrderFormatted.cummulativeQuoteQty;
 
         }
 
+        console.log(`Finished swaps: ${newOrders}`);
         return newOrders;
     }
     catch (err) {
