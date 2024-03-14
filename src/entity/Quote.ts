@@ -27,6 +27,9 @@ export class Quote {
     operation: "BUY" | "SELL";
 
     @Column({ type: "float" })
+    estimatedPriceBase: number;
+
+    @Column({ type: "float" })
     estimatedPrice: number;
 
     @ManyToOne(() => Route, (route) => route.uuid, { eager: true })

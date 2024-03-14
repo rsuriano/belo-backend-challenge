@@ -2,11 +2,13 @@
 import binanceAPI from "./binance-service";
 import { Quote, Route } from "../entity";
 import utils from '../utils/utils';
-import { Direction, QuoteRequest, RouteEstimation, RouteSegment } from "../types/quote";
+import { Direction, Operation, QuoteRequest, RouteEstimation, RouteSegment } from "../types/quote";
 import pairDBService from "./pair-db-service";
 import quoteDbService from "./quote-db-service";
 
 const ORDER_BOOK_LIMITS = [100, 250, 700, 1900, 5000];
+const BASE_FEE = Number(process.env.BASE_FEE_PERCENT ?? 0);
+const BASE_SPREAD = Number(process.env.BASE_SPREAD_PERCENT);
 
 const estimatePairPrice = (quoteRequest: QuoteRequest) => async (lastSegment: RouteSegment, segment: RouteSegment): Promise<RouteSegment> => {
     try {
@@ -115,8 +117,16 @@ const createQuote = async (quoteRequest: QuoteRequest): Promise<Quote> => {
     // calculate price for all routes and return the cheapest
     const bestRoute = await getCheapestRoute(pair.routes, quoteRequest);
 
-    // TODO: add fee and spread
-    // let priceWithFees = priceAvg + fee + spread
+
+    // add fee and spread
+    const bestPrice = bestRoute.price * quoteRequest.volume;
+
+    const spreadOperator: number = quoteRequest.operation === Operation.BUY ? 1 : -1;
+    const spreadRatio: number = (spreadOperator * BASE_SPREAD) / (2 * 100);
+
+    const priceWithSpread: number = bestPrice * (1 + spreadRatio); // applied to bestPrice for simplicity
+    const priceWithFees: number = priceWithSpread * (1 + BASE_FEE / 100);
+
 
     // assemble newQuote object
     const newQuote = {
@@ -124,7 +134,8 @@ const createQuote = async (quoteRequest: QuoteRequest): Promise<Quote> => {
         volume: quoteRequest.volume,
         operation: quoteRequest.operation,
         route: bestRoute.route,
-        estimatedPrice: utils.roundTwoDecimals(bestRoute.price * quoteRequest.volume),
+        estimatedPriceBase: utils.roundTwoDecimals(bestPrice), // round only for legibility
+        estimatedPrice: utils.roundTwoDecimals(priceWithFees), // 
         expirationSeconds: Number(process.env.EXPIRATION_TIME)
     };
 

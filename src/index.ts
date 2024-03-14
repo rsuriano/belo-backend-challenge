@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import express from 'express';
 
 import swapRouter from './routes/swap-api';
-import swapSettingsRouter from './routes/swap-settings';
 import { AppDataSource } from "./utils/data-source";
 
 dotenv.config();
@@ -18,7 +17,6 @@ AppDataSource.initialize().then(() => {
 
     // express setup
     app.use('/api', swapRouter);
-    app.use('/settings', swapSettingsRouter);
 
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);

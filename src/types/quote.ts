@@ -37,6 +37,7 @@ export interface QuoteCreate {
     pair: PairDB;
     volume: number;
     operation: Operation;
+    estimatedPriceBase: number;
     estimatedPrice: number;
     route: RouteDB;
     expirationSeconds: number;
