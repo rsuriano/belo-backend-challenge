@@ -1,6 +1,7 @@
 // saves and patches quotes to DB
 import binanceAPI from "./binance-service";
 import { Quote, Route } from "../entity";
+import utils from '../utils/utils';
 import { Direction, QuoteRequest, RouteEstimation, RouteSegment } from "../types/quote";
 import pairDBService from "./pair-db-service";
 import quoteDbService from "./quote-db-service";
@@ -88,7 +89,7 @@ const getCheapestRoute = async (routes: Route[], quoteRequest: QuoteRequest): Pr
 
     const routePrices = await Promise.all(routes.map(estimatePrice));
 
-    console.log(routePrices.map((item) => { return `${item.route.name}: ${Math.round(item.price * 100) / 100}`; }));
+    console.log(routePrices.map((item) => { return `${item.route.name}: ${utils.roundTwoDecimals(item.price)}`; }));
 
     // get cheapest route and return it
     const cheapestRoute = routePrices.reduce(
@@ -98,7 +99,7 @@ const getCheapestRoute = async (routes: Route[], quoteRequest: QuoteRequest): Pr
         routePrices[0]
     );
 
-    console.log(`Cheapest route was "${cheapestRoute.route.name}": $${Math.round(cheapestRoute.price * 100) / 100}`);
+    console.log(`Cheapest route was "${cheapestRoute.route.name}": $${utils.roundTwoDecimals(cheapestRoute.price)}`);
     return cheapestRoute;
 };
 
@@ -123,7 +124,7 @@ const createQuote = async (quoteRequest: QuoteRequest): Promise<Quote> => {
         volume: quoteRequest.volume,
         operation: quoteRequest.operation,
         route: bestRoute.route,
-        estimatedPrice: bestRoute.price,
+        estimatedPrice: utils.roundTwoDecimals(bestRoute.price * quoteRequest.volume),
         expirationSeconds: Number(process.env.EXPIRATION_TIME)
     };
 

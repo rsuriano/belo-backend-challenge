@@ -12,6 +12,11 @@ const getSide = (op: Operation, direction: Direction): Side => {
 
 };
 
+const roundTwoDecimals = (num: number): number => {
+    return Math.round(num * 100) / 100;
+};
+
 export default {
-    getSide
+    getSide,
+    roundTwoDecimals
 };

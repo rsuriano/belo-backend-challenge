@@ -53,9 +53,9 @@ router.post('/swap', async (req, res) => {
         }
 
         // const newSwap = await swapService.createSwap(swapRequest);
-        await swapService.createSwap(swapRequest);
+        const newSwap = await swapService.createSwap(swapRequest);
 
-        res.status(201).json('ola');
+        res.status(201).json(newSwap);
     }
 
     catch (error: unknown) {

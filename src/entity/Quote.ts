@@ -21,7 +21,7 @@ export class Quote {
     @JoinColumn({ name: 'pair_uuid' })
     pair: Pair;
 
-    @Column()
+    @Column({ type: "float" })
     volume: number;
 
     @Column()
@@ -53,8 +53,8 @@ export class Quote {
         const now = Date.now() / 1000;
         const expiresAt = now + offsetInSeconds;
 
-        this.createdAt = now;
-        this.expiresAt = expiresAt;
+        this.createdAt = this.createdAt ?? now;
+        this.expiresAt = this.expiresAt ?? expiresAt;
     }
 
 }

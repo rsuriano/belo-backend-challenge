@@ -25,12 +25,16 @@ export class Swap {
     @Column({ type: "float" })
     binanceFee: number;
 
+    @Column("simple-json")
+    binanceResponse: object[];
+
     @Column({ type: "float" })
     createdAt: number;
 
     @BeforeInsert()
     setDates() {
-        this.createdAt = Date.now() / 1000;
+        const now = Date.now() / 1000;
+        this.createdAt = now;
     }
 
 }

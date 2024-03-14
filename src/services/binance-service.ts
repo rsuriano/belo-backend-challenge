@@ -1,8 +1,9 @@
 // interfaces with binance
-import { Spot, RestMarketTypes, OrderType, RestTradeTypes } from '@binance/connector-typescript';
+import { Spot, RestMarketTypes, OrderType, OrderStatus, RestTradeTypes } from '@binance/connector-typescript';
 import { RouteSegment, Direction, Operation, FormattedOrderBook } from '../types/quote';
 import { Quote } from '../entity';
 import utils from '../utils/utils';
+import { BinanceSwapResponse } from '../types/swap';
 
 const API_KEY = process.env.BINANCE_API_KEY;
 const API_SECRET = process.env.BINANCE_SECRET_KEY;
@@ -56,32 +57,55 @@ const getOrderBookProcessed = async (segment: RouteSegment, operation: Operation
     return orderBook;
 };
 
-// const executeSwap = async (quote: Quote): Promise<(Record<string, never> | RestTradeTypes.testNewOrderResponse)[]> => {
-const executeSwap = async (quote: Quote) => {
+const executeSwap = async (quote: Quote): Promise<BinanceSwapResponse[]> => {
     try {
-        // const status: (Record<string, never> | RestTradeTypes.testNewOrderResponse )[] = [];
-        const status = [];
-        const quantity = quote.volume;
+        const newOrders: BinanceSwapResponse[] = [];
+        let quantity = quote.volume;
 
+        // make swap for each segment in chosen route
         for (const pair of quote.route.path) {
 
+            // set quantity and side
+            const side = utils.getSide(quote.operation, pair.direction);
             const options: RestTradeTypes.testNewOrderOptions = {
                 quantity: quantity
             };
 
-            const side = utils.getSide(quote.operation, pair.direction);
-            // const testOrder = await client.testNewOrder(pair.binancePair, side, OrderType.MARKET, options);
-            const testOrder = await client.newOrder(pair.binancePair, side, OrderType.MARKET, options);
+            let newOrder = await client.newOrder(pair.binancePair, side, OrderType.MARKET, options);
 
-            status.push(testOrder);
+            // repeat order if it failed
+            // not handling partially filled orders at the moment, as it increases complexity for this project
+            while (newOrder.status !== OrderStatus.FILLED) {
+                newOrder = await client.newOrder(pair.binancePair, side, OrderType.MARKET, options);
+            }
 
-            // update volume according to last price
+            // create order object for response
+            const orderFills = (newOrder.fills ?? []).map(
+                (fill) => ({
+                    ...fill,
+                    price: Number(fill.price),
+                    qty: Number(fill.qty),
+                    commission: Number(fill.commission)
+                })
+            );
+
+            // create newOrder Object
+            const newOrderFormatted = {
+                ...newOrder,
+                price: Number(newOrder.price),
+                origQty: Number(newOrder.origQty),
+                executedQty: Number(newOrder.executedQty),
+                cummulativeQuoteQty: Number(newOrder.cummulativeQuoteQty),
+                fills: orderFills
+            };
+            newOrders.push(newOrderFormatted);
+
+            // update volume according to this pair's price
+            quantity = quantity * Number(newOrder.cummulativeQuoteQty);
 
         }
 
-        console.log(status);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return status;
+        return newOrders;
     }
     catch (err) {
         console.error(err);

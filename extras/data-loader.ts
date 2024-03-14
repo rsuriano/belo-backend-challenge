@@ -1,6 +1,7 @@
 import { AppDataSource } from "../src/utils/data-source";
 import { Pair } from "../src/entity/Pair";
 import { Route } from "../src/entity/Route";
+import { Direction } from "../src/types/quote";
 import * as fs from "fs";
 
 interface RouteDataWithPairUUID {
@@ -8,7 +9,7 @@ interface RouteDataWithPairUUID {
     name: string;
     path: {
         binancePair: string;
-        direction: "DIRECT" | "INVERTED";
+        direction: Direction;
     }[];
     pair_uuid: string; // to link with pair during data load
     created_at: Date;
