@@ -9,16 +9,14 @@ import swapDBService from "./swap-db-service";
 
 const entityManager = AppDataSource.manager;
 
-const calculatePrices = (swapResponses: BinanceSwapResponse[]) => {
-    let finalPrice = 1;
+const calculateFee = (swapResponses: BinanceSwapResponse[]) => {
     let finalFees = 0;
 
     for (const response of swapResponses) {
-        finalPrice *= (response.cummulativeQuoteQty ?? 1);
         finalFees += (response.fills ?? []).reduce((c, i) => (c + i.price), 0);
     }
 
-    return [finalPrice, finalFees];
+    return finalFees;
 };
 
 const createSwap = async (swapRequest: SwapRequest): Promise<Swap> => {
@@ -46,14 +44,14 @@ const createSwap = async (swapRequest: SwapRequest): Promise<Swap> => {
     const swapResponses = await binanceAPI.executeSwap(quote);
 
     // get data for swap object
-    const [finalPrice, binanceFee] = calculatePrices(swapResponses);
+    const binanceFee = calculateFee(swapResponses);
 
-    console.log(`Final price for swap was: ${finalPrice}.`);
+    console.log(`Final price for swap was: ${swapResponses[-1].cummulativeQuoteQty}.`);
 
     // create new Swap object and save to DB
     const newSwap = {
         quote: quote,
-        finalPrice: finalPrice,
+        finalPrice: Number(swapResponses[-1].cummulativeQuoteQty ?? 0),
         binanceFee: binanceFee,
         binanceResponse: swapResponses
     };

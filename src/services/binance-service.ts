@@ -71,12 +71,20 @@ const executeSwap = async (quote: Quote): Promise<BinanceSwapResponse[]> => {
             // set quantity and side
             const side = utils.getSide(quote.operation, pair.direction);
             const options: RestTradeTypes.testNewOrderOptions = {
-                quoteOrderQty: quantity
+                quantity: quantity < 1 ? quantity : Math.ceil(quantity)
             };
 
             console.log(`\tswap: ${pair.binancePair} -> ${quantity}...`);
 
             let newOrder = await client.newOrder(pair.binancePair, side, OrderType.MARKET, options);
+            // TODO: 
+            //      -> check for limits using exchange info endpoint and parsing for pair:
+            // 
+            //      Filter failure: NOTIONAL
+            //      Filter failure: LOT_SIZE
+            //
+            //      -> check for balances using account info endpoint
+            //
 
             // repeat order if it failed
             // not handling partially filled orders at the moment, as it increases complexity for this project
@@ -112,7 +120,6 @@ const executeSwap = async (quote: Quote): Promise<BinanceSwapResponse[]> => {
 
         }
 
-        console.log(`Finished swaps: ${newOrders}`);
         return newOrders;
     }
     catch (err) {
