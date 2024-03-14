@@ -19,7 +19,7 @@
     "routes": [
         {
             "uuid": "f27ecbda-a549-416a-95b1-a8ecaf25ad61",
-            "name": "Route for USDTETH",
+            "name": "Route for ETHUSDT",
             "path": [
                 {
                     "binancePair": "ETHUSDT",
@@ -31,7 +31,7 @@
         },
         {
             "uuid": "ae925b4b-a163-4592-a0c2-b8da303a5f5c",
-            "name": "Route for USDTBTC",
+            "name": "Route for BTCUSDT",
             "path": [
                 {
                     "binancePair": "BTCUSDT",
@@ -43,7 +43,7 @@
         },
         {
             "uuid": "3b3f58c6-1bad-4af4-acf5-813fd2ae6ee7",
-            "name": "Route 1 for USDCAAVE through BNB",
+            "name": "Route 1 for AAVEUSDC through BNB",
             "path": [
                 {
                     "binancePair": "AAVEBNB",
@@ -59,7 +59,7 @@
         },
         {
             "uuid": "bd882a46-daf1-4293-a7f2-510e1784e482",
-            "name": "Route 2 for USDCAAVE through BTC",
+            "name": "Route 2 for AAVEUSDC through BTC",
             "path": [
                 {
                     "binancePair": "AAVEBTC",
@@ -75,7 +75,7 @@
         },
         {
             "uuid": "7eeac452-86c6-48bd-9a72-ac3487c7bf66",
-            "name": "Route 3 for USDCAAVE through ETH",
+            "name": "Route 3 for AAVEUSDC through ETH",
             "path": [
                 {
                     "binancePair": "AAVEETH",
@@ -91,7 +91,7 @@
         },
         {
             "uuid": "ac34a9c2-8f54-461e-bfe0-5d7dada04cd8",
-            "name": "Route 4 for USDCAAVE through USDT",
+            "name": "Route 4 for AAVEUSDC through USDT",
             "path": [
                 {
                     "binancePair": "AAVEUSDT",
