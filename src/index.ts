@@ -1,28 +1,28 @@
 import dotenv from 'dotenv';
 import express from 'express';
 
-import swapRouter from './routes/swap-api';
 import { AppDataSource } from "./utils/data-source";
+import { app } from './app';
 
 dotenv.config();
 
-// express setup
-const PORT = 3000;
-const app = express();
-app.use(express.json());
-
-
-AppDataSource.initialize().then(() => {
-    console.log('Database connected successfully.');
-
-    // express setup
-    app.use('/api', swapRouter);
-
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
+// typeorm initialization
+AppDataSource
+    .initialize()
+    .then(() => {
+        console.log("Database connected");
+    })
+    .catch((err) => {
+        console.error("Error connecting to db:", err);
     });
 
-}).catch(error => console.log(error));
+// express setup
+const PORT = 3000;
+app.use(express.json());
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
 export default {
     app

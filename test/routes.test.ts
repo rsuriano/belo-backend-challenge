@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import request from 'supertest';
-import index from '../src/index'; // Adjust this import to the actual path of your Express app
+import { app } from '../src/app';
 
 describe('GET /pairs', () => {
     it('should fetch all pairs', async () => {
 
-        const response = await request(index.app).get('/pairs');
+        const response = await request(app).get('/pairs');
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toBeInstanceOf(Array);
