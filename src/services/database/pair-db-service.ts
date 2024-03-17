@@ -1,8 +1,8 @@
-// gets pairs from DB
-import { AppDataSource } from "../utils/data-source";
+import { AppDataSource } from "../../utils/data-source";
 
-import { Pair } from "../entity";
-import { PairResponse } from "../types/quote";
+import { PairResponse } from "../../types/pair";
+import { Pair } from "../../entity";
+
 
 const getPairs = async (): Promise<PairResponse> => {
     const pairs = await AppDataSource.manager.find(Pair.name);

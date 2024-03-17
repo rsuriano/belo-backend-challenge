@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { Pair, Route, Quote, Swap } from "../entity";
@@ -18,3 +18,22 @@ export const AppDataSource = new DataSource({
     migrations: [],
     subscribers: [],
 });
+
+// export const connect_db = () => {
+//     AppDataSource
+//         .initialize()
+//         .then(() => {
+//             console.log("Database connected.");
+//         })
+//         .catch((err) => {
+//             console.error("Error connecting to db:", err);
+//         });
+// };
+
+export const connect_db = async () => {
+    await AppDataSource.initialize();
+};
+
+export const disconnect_db = async () => {
+    await AppDataSource.destroy();
+};

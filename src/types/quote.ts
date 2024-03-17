@@ -1,36 +1,14 @@
 import { Route as RouteDB, Pair as PairDB } from "../entity";
 
 export enum Operation {
-    BUY = 'BUY',
-    SELL = 'SELL',
-}
-
-export enum Direction {
-    DIRECT = 'DIRECT',
-    INVERTED = 'INVERTED',
-}
-
-// this goes in route type
-export interface RouteSegment {
-    binancePair: string;
-    direction: Direction;
-    volume?: number,
-    price?: number
-}
-
-export interface PairResponse {
-    pairs: string[];
+    BUY = "BUY",
+    SELL = "SELL",
 }
 
 export class QuoteRequest {
     pair: string;
     volume: number;
     operation: Operation;
-}
-
-export interface RouteEstimation {
-    route: RouteDB;
-    price: number;
 }
 
 export interface QuoteCreate {

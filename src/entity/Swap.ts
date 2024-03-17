@@ -17,7 +17,7 @@ export class Swap {
     uuid: string;
 
     @OneToOne(() => Quote)
-    @JoinColumn({ name: 'quote_uuid' })
+    @JoinColumn({ name: "quote_uuid" })
     quote: Quote;
 
     @Column({ type: "float" })

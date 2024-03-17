@@ -1,10 +1,13 @@
-// saves and patches quotes to DB
+import { Operation, QuoteRequest } from "../types/quote";
+import { Direction, RouteEstimation, RouteSegment } from "../types/route";
+
+import pairDBService from "./database/pair-db-service";
+import quoteDBService from "./database/quote-db-service";
 import binanceAPI from "./binance-service";
+
 import { Quote, Route } from "../entity";
-import utils from '../utils/utils';
-import { Direction, Operation, QuoteRequest, RouteEstimation, RouteSegment } from "../types/quote";
-import pairDBService from "./pair-db-service";
-import quoteDbService from "./quote-db-service";
+import utils from "../utils/utils";
+
 
 const ORDER_BOOK_LIMITS = [100, 250, 700, 1900, 5000];
 const BASE_FEE = Number(process.env.BASE_FEE_PERCENT ?? 0);
@@ -14,8 +17,8 @@ const estimatePairPrice = (quoteRequest: QuoteRequest) => async (lastSegment: Ro
     try {
         // console.log(`Estimating price for pair ${segment.binancePair}, volume ${quoteRequest.volume}, ${quoteRequest.operation}`);
 
-        if (!('volume' in lastSegment && 'price' in lastSegment)) {
-            throw Error('Error in path price estimation');
+        if (!("volume" in lastSegment && "price" in lastSegment)) {
+            throw Error("Error in path price estimation");
         }
 
         const currentSegmentVolume = Number(lastSegment.volume) * Number(lastSegment.price);
@@ -41,7 +44,7 @@ const estimatePairPrice = (quoteRequest: QuoteRequest) => async (lastSegment: Ro
 
         }
 
-        // throw error if there's no volume for estimation
+        // throw error if there"s no volume for estimation
         if (volume <= currentSegmentVolume) {
             const low_volume_msg = `Not enough volume in pair ${segment.binancePair}: ${volume}. try again with a lower volume`;
             console.error(low_volume_msg);
@@ -73,7 +76,7 @@ const estimateRoutePrice = (quoteRequest: QuoteRequest) => async (route: Route):
     // calculate price for each segment in path
     const estimatePrice = estimatePairPrice(quoteRequest);
 
-    let initialSegment: RouteSegment = { binancePair: 'ROOT', direction: Direction.DIRECT, volume: quoteRequest.volume, price: 1 };
+    let initialSegment: RouteSegment = { binancePair: "ROOT", direction: Direction.DIRECT, volume: quoteRequest.volume, price: 1 };
     for (const segment of route.path) {
         initialSegment = await estimatePrice(initialSegment, segment);
     }
@@ -107,7 +110,7 @@ const getCheapestRoute = async (routes: Route[], quoteRequest: QuoteRequest): Pr
 
 const createQuote = async (quoteRequest: QuoteRequest): Promise<Quote> => {
 
-    // get pair's available routes
+    // get pair"s available routes
     const pair = await pairDBService.getPairByName(quoteRequest.pair);
 
     if (!pair) {
@@ -140,7 +143,7 @@ const createQuote = async (quoteRequest: QuoteRequest): Promise<Quote> => {
     };
 
     // save to DB
-    const newDBquote = quoteDbService.createQuote(newQuote);
+    const newDBquote = quoteDBService.createQuote(newQuote);
 
     return newDBquote;
 };

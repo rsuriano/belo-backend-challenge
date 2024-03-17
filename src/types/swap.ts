@@ -19,12 +19,6 @@ export interface SwapCreate {
     binanceResponse: object[]
 }
 
-export interface SwapResponse {
-    swapUuid: string;
-    status: boolean;
-    message?: string;
-}
-
 export interface Order {
     price: number,
     qty: number,

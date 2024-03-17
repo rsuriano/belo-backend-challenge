@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-// database connector
-import { AppDataSource } from "../utils/data-source";
+import { AppDataSource } from "../../utils/data-source";
 
-import { QuoteCreate } from "../types/quote";
-import { Quote } from '../entity';
+import { QuoteCreate } from "../../types/quote";
+import { Quote } from "../../entity";
 
 const entityManager = AppDataSource.manager;
 
@@ -25,7 +22,12 @@ const createQuote = async (newQuote: QuoteCreate) => {
     return quote;
 };
 
+const updateQuote = async (quote: Quote) => {
+    await entityManager.save(Quote, quote);
+};
+
 export default {
     getQuoteByUuid,
-    createQuote
+    createQuote,
+    updateQuote
 };

@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-// database connector
-import { AppDataSource } from "../utils/data-source";
+import { AppDataSource } from "../../utils/data-source";
 
-import { SwapCreate } from "../types/swap";
-import { Swap } from '../entity';
+import { SwapCreate } from "../../types/swap";
+import { Swap } from "../../entity";
 
 const entityManager = AppDataSource.manager;
 

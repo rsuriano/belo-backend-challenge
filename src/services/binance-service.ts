@@ -1,13 +1,16 @@
-// interfaces with binance
-import { Spot, RestMarketTypes, OrderType, OrderStatus, RestTradeTypes } from '@binance/connector-typescript';
-import { RouteSegment, Direction, Operation, FormattedOrderBook } from '../types/quote';
-import { Quote } from '../entity';
-import utils from '../utils/utils';
-import { BinanceSwapResponse } from '../types/swap';
+import { Spot, RestMarketTypes, OrderType, OrderStatus, RestTradeTypes } from "@binance/connector-typescript";
+
+import { Operation, FormattedOrderBook } from "../types/quote";
+import { RouteSegment, Direction } from "../types/route";
+import { BinanceSwapResponse } from "../types/swap";
+
+import { Quote } from "../entity";
+import utils from "../utils/utils";
+
 
 const API_KEY = process.env.BINANCE_API_KEY;
 const API_SECRET = process.env.BINANCE_SECRET_KEY;
-const BASE_URL = 'https://testnet.binance.vision';
+const BASE_URL = process.env.BINANCE_URL;
 
 const client = new Spot(API_KEY, API_SECRET, { baseURL: BASE_URL });
 
@@ -45,13 +48,10 @@ const getOrderBook = async (pair: string, limit: number = 100): Promise<RestMark
 
 const getOrderBookProcessed = async (segment: RouteSegment, operation: Operation, limit: number) => {
 
-    // get order book for pair
     const fullOrderBook = await getOrderBook(segment.binancePair, limit);
 
-    // invert if needed, parse strings to numbers
     const processedOrderBook = adjustOrderBook(fullOrderBook, segment.direction);
 
-    // chose bid or ask accordingly
     const orderBook = (operation == Operation.BUY) ? processedOrderBook.asks : processedOrderBook.bids;
 
     return orderBook;
@@ -60,12 +60,11 @@ const getOrderBookProcessed = async (segment: RouteSegment, operation: Operation
 const executeSwap = async (quote: Quote): Promise<BinanceSwapResponse[]> => {
     try {
         const routeForLog = quote.route.path.map((item) => (`[${item.binancePair}(${item.direction})]`));
-        console.log(`Starting to execute swap: ${quote.pair.name}: ${routeForLog.join('->')} ...`);
+        console.log(`Starting to execute swap: ${quote.pair.name}: ${routeForLog.join("->")} ...`);
 
         const newOrders: BinanceSwapResponse[] = [];
         let quantity = quote.volume;
 
-        // make swap for each segment in chosen route
         for (const pair of quote.route.path) {
 
             // set quantity and side
@@ -75,6 +74,7 @@ const executeSwap = async (quote: Quote): Promise<BinanceSwapResponse[]> => {
             };
 
             console.log(`\tswap: ${pair.binancePair} -> ${quantity}...`);
+
 
             let newOrder = await client.newOrder(pair.binancePair, side, OrderType.MARKET, options);
             // TODO: 
@@ -115,7 +115,7 @@ const executeSwap = async (quote: Quote): Promise<BinanceSwapResponse[]> => {
 
             console.log(`\tfinished swap: ${JSON.stringify(newOrderFormatted)}`);
 
-            // update volume according to this pair's price
+            // update volume according to this pair"s price
             quantity = newOrderFormatted.cummulativeQuoteQty;
 
         }

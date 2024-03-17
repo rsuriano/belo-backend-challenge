@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 
 import { Pair } from "./Pair";
-import { RouteSegment } from "../types/quote";
+import { RouteSegment } from "../types/route";
 
 @Entity()
 export class Route {
@@ -23,7 +23,7 @@ export class Route {
     path: RouteSegment[];
 
     @ManyToOne(() => Pair, (pair) => pair.routes)
-    @JoinColumn({ name: 'pair_uuid' })
+    @JoinColumn({ name: "pair_uuid" })
     pair: Pair;
 
     @Column({ type: "float" })

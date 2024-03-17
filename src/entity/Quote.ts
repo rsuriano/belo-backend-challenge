@@ -17,7 +17,7 @@ export class Quote {
     uuid: string;
 
     @ManyToOne(() => Pair, { eager: true })
-    @JoinColumn({ name: 'pair_uuid' })
+    @JoinColumn({ name: "pair_uuid" })
     pair: Pair;
 
     @Column({ type: "float" })
@@ -33,7 +33,7 @@ export class Quote {
     estimatedPrice: number;
 
     @ManyToOne(() => Route, (route) => route.uuid, { eager: true })
-    @JoinColumn({ name: 'route_uuid' })
+    @JoinColumn({ name: "route_uuid" })
     route: Route;
 
     @Column()

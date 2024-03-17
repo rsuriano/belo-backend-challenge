@@ -1,13 +1,12 @@
-// executes swap with binance spot api
-import binanceAPI from "./binance-service";
-import { Quote, Swap } from "../entity";
 import { SwapRequest } from "../types/swap";
-import quoteDBService from "./quote-db-service";
-import { AppDataSource } from "../utils/data-source";
-import { BinanceSwapResponse } from '../types/swap';
-import swapDBService from "./swap-db-service";
+import { BinanceSwapResponse } from "../types/swap";
 
-const entityManager = AppDataSource.manager;
+import quoteDBService from "./database/quote-db-service";
+import swapDBService from "./database/swap-db-service";
+import binanceAPI from "./binance-service";
+
+import { Swap } from "../entity";
+
 
 const calculateFee = (swapResponses: BinanceSwapResponse[]) => {
     let finalFees = 0;
@@ -20,7 +19,7 @@ const calculateFee = (swapResponses: BinanceSwapResponse[]) => {
 };
 
 const createSwap = async (swapRequest: SwapRequest): Promise<Swap> => {
-    // get quote from DB
+
     const quote = await quoteDBService.getQuoteByUuid(swapRequest.quote_uuid);
 
     if (!quote) {
@@ -28,27 +27,22 @@ const createSwap = async (swapRequest: SwapRequest): Promise<Swap> => {
     }
 
     // these properties can be checked via the DB select, but 
-    // you lose info for the error description: 
+    // you lose info for the error description:
 
-    // check if it's expired
     if (quote.expiresAt < Date.now() / 1000) {
         throw Error("Quote has expired, must estimate a new price");
     }
 
-    // check if it's used
     if (quote.used == true) {
         throw Error("Quote has been used in a swap already");
     }
 
-    // execute swap via Binance
     const swapResponses = await binanceAPI.executeSwap(quote);
 
-    // get data for swap object
     const binanceFee = calculateFee(swapResponses);
 
     console.log(`Final price for swap was: ${swapResponses[-1].cummulativeQuoteQty}.`);
 
-    // create new Swap object and save to DB
     const newSwap = {
         quote: quote,
         finalPrice: Number(swapResponses[-1].cummulativeQuoteQty ?? 0),
@@ -57,9 +51,8 @@ const createSwap = async (swapRequest: SwapRequest): Promise<Swap> => {
     };
     const swapDB: Swap = await swapDBService.createSwap(newSwap);
 
-    // mark quote as used
     quote.used = true;
-    await entityManager.save(Quote, quote);
+    await quoteDBService.updateQuote(quote);
 
     return swapDB;
 };
