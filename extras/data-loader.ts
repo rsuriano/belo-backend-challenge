@@ -1,8 +1,12 @@
+import * as fs from "fs";
+
 import { AppDataSource } from "../src/utils/data-source";
+
+import { Direction } from "../src/types/route";
+
 import { Pair } from "../src/entity/Pair";
 import { Route } from "../src/entity/Route";
-import { Direction } from "../src/types/quote";
-import * as fs from "fs";
+
 
 interface RouteDataWithPairUUID {
     uuid: string;

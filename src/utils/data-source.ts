@@ -1,6 +1,7 @@
-import dotenv from "dotenv";
 import "reflect-metadata";
+import dotenv from "dotenv";
 import { DataSource } from "typeorm";
+
 import { Pair, Route, Quote, Swap } from "../entity";
 
 dotenv.config();

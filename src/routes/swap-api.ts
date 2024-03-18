@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import express from "express";
-import { validate } from "class-validator";
 import { plainToClass } from "class-transformer";
+import { validate } from "class-validator";
 
 import pairDBService from "../services/database/pair-db-service";
 import quoteService from "../services/quote-service";
@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.get("/pairs", async (_req, res) => {
     const pairs = await pairDBService.getPairs();
-    res.send(pairs);
+    res.json(pairs);
 });
 
 router.post("/quote", async (req, res) => {
@@ -25,6 +25,8 @@ router.post("/quote", async (req, res) => {
         if (errors.length > 0) {
             res.status(400).json({ errors });
         }
+
+        console.log("c");
 
         const newQuote = await quoteService.createQuote(quoteRequest);
 
@@ -37,7 +39,7 @@ router.post("/quote", async (req, res) => {
         if (error instanceof Error) {
             errorMessage += " Error: " + error.message;
         }
-        res.status(400).send(errorMessage);
+        res.status(400).json(errorMessage);
     }
 
 });
@@ -62,7 +64,7 @@ router.post("/swap", async (req, res) => {
         if (error instanceof Error) {
             errorMessage += " Error: " + error.message;
         }
-        res.status(400).send(errorMessage);
+        res.status(400).json(errorMessage);
     }
 
 });

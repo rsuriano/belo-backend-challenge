@@ -1,8 +1,7 @@
 import dotenv from "dotenv";
-import express from "express";
 
-import { AppDataSource } from "./utils/data-source";
 import { app } from "./app";
+import { AppDataSource } from "./utils/data-source";
 
 dotenv.config();
 
@@ -17,8 +16,7 @@ AppDataSource
     });
 
 // express setup
-const PORT = 3000;
-app.use(express.json());
+const PORT = Number(process.env.API_PORT ?? 3000);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

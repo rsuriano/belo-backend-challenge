@@ -81,10 +81,13 @@ const estimateRoutePrice = (quoteRequest: QuoteRequest) => async (route: Route):
         initialSegment = await estimatePrice(initialSegment, segment);
     }
 
-    return {
-        route: route,
+    const result = {
+        route,
         price: Number(initialSegment.price)
     };
+    // TODO: check this
+    console.log(result);
+    return result;
 };
 
 const getCheapestRoute = async (routes: Route[], quoteRequest: QuoteRequest): Promise<RouteEstimation> => {
@@ -110,7 +113,7 @@ const getCheapestRoute = async (routes: Route[], quoteRequest: QuoteRequest): Pr
 
 const createQuote = async (quoteRequest: QuoteRequest): Promise<Quote> => {
 
-    // get pair"s available routes
+    // get pair's available routes
     const pair = await pairDBService.getPairByName(quoteRequest.pair);
 
     if (!pair) {
