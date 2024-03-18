@@ -1,13 +1,12 @@
 import dotenv from "dotenv";
 
 import { app } from "./app";
-import { AppDataSource } from "./utils/data-source";
+import { connect_db } from "./utils/data-source";
 
 dotenv.config();
 
 // typeorm initialization
-AppDataSource
-    .initialize()
+connect_db()
     .then(() => {
         console.log("Database connected");
     })

@@ -20,17 +20,6 @@ export const AppDataSource = new DataSource({
     subscribers: [],
 });
 
-// export const connect_db = () => {
-//     AppDataSource
-//         .initialize()
-//         .then(() => {
-//             console.log("Database connected.");
-//         })
-//         .catch((err) => {
-//             console.error("Error connecting to db:", err);
-//         });
-// };
-
 export const connect_db = async () => {
     await AppDataSource.initialize();
 };
