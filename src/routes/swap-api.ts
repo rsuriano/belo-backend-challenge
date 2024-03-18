@@ -26,8 +26,6 @@ router.post("/quote", async (req, res) => {
             res.status(400).json({ errors });
         }
 
-        console.log("c");
-
         const newQuote = await quoteService.createQuote(quoteRequest);
 
         res.status(201).json(newQuote);
