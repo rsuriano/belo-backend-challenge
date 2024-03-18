@@ -11,7 +11,7 @@
     },
     {
         "pair": "AAVEUSDC",
-        "volume": 2,
+        "volume": 0.2,
         "operation": "BUY"
     },
     {
@@ -26,7 +26,7 @@
     },
     {
         "pair": "AAVEUSDC",
-        "volume": 2,
+        "volume": 0.2,
         "operation": "SELL"
     }
 ]
