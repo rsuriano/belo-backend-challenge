@@ -15,7 +15,7 @@ const BASE_URL = process.env.BINANCE_URL;
 const client = new Spot(API_KEY, API_SECRET, { baseURL: BASE_URL });
 
 const adjustOrderBook = (orderBook: RestMarketTypes.orderBookResponse, direction: string): FormattedOrderBook => {
-    if (direction == String(Direction.INVERTED)) {
+    if (direction === String(Direction.INVERTED)) {
         return {
             lastUpdateId: orderBook.lastUpdateId,
             bids: orderBook.asks.map(([price, volume]) => [1 / Number(price), Number(volume) * Number(price)]),
@@ -52,7 +52,7 @@ const getOrderBookProcessed = async (segment: RouteSegment, operation: Operation
 
     const processedOrderBook = adjustOrderBook(fullOrderBook, segment.direction);
 
-    const orderBook = (operation == Operation.BUY) ? processedOrderBook.asks : processedOrderBook.bids;
+    const orderBook = (operation === Operation.BUY) ? processedOrderBook.asks : processedOrderBook.bids;
 
     return orderBook;
 };

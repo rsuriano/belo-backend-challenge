@@ -5,11 +5,11 @@ import { Direction } from "../types/route";
 
 const getSide = (op: Operation | "BUY" | "SELL", direction: Direction): Side => {
 
-    if (direction == Direction.DIRECT) {
-        return (op == Operation.BUY) ? Side.BUY : Side.SELL;
+    if (direction === Direction.DIRECT) {
+        return (op === Operation.BUY) ? Side.BUY : Side.SELL;
     }
     else {
-        return (op == Operation.BUY) ? Side.SELL : Side.BUY;
+        return (op === Operation.BUY) ? Side.SELL : Side.BUY;
     }
 
 };

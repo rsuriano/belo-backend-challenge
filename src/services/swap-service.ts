@@ -33,7 +33,7 @@ const createSwap = async (swapRequest: SwapRequest): Promise<Swap> => {
         throw Error("Quote has expired, must estimate a new price");
     }
 
-    if (quote.used == true) {
+    if (quote.used === true) {
         throw Error("Quote has been used in a swap already");
     }
 
