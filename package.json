@@ -4,14 +4,13 @@
    "description": "",
    "main": "index.js",
    "scripts": {
-      "tsc": "tsc",
-      "dev": "ts-node-dev src/index.ts",
-      "lint": "eslint --ext .ts .",
       "start": "ts-node src/index.ts",
-      "typeorm": "typeorm-ts-node-commonjs",
-      "load-initial-data": "ts-node extras/data-loader.ts",
+      "dev": "ts-node-dev src/index.ts",
       "test": "jest --silent",
-      "test_debug": "jest --silent --detectOpenHandles"
+      "tsc": "tsc",
+      "lint": "eslint --ext .ts .",
+      "typeorm": "typeorm-ts-node-commonjs",
+      "load-initial-data": "ts-node extras/data-loader.ts"
    },
    "author": "Ramiro Suriano",
    "license": "ISC",
@@ -44,8 +43,6 @@
       "express": "^4.18.3",
       "pg": "^8.4.0",
       "reflect-metadata": "^0.1.13",
-      "swagger-jsdoc": "^6.2.8",
-      "swagger-ui-express": "^5.0.0",
       "typeorm": "0.3.20",
       "uuid": "^9.0.1"
    }

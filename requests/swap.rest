@@ -1,0 +1,6 @@
+POST http://localhost:3000/api/swap HTTP/1.1
+content-type: application/json
+
+{
+    "quote_uuid": "02b17452-c750-425d-9f0c-aca15294c7d1"
+}
