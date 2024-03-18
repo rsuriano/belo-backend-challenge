@@ -33,7 +33,7 @@ describe("POST /swap", () => {
             .post("/api/quote")
             .send({
                 "pair": "BTCUSDT",
-                "volume": 0.01,
+                "volume": 0.0001,
                 "operation": "BUY"
             });
 
@@ -59,6 +59,12 @@ describe("POST /swap", () => {
 
         expect(response.statusCode).toBe(201);
         expect(response.body).toBeInstanceOf(Object);
+
+        expect(response.body).toHaveProperty("uuid");
+        expect(typeof (response.body.uuid)).toBe("string");
+
+        const swap: Swap = response.body as Swap;
+        swapsToDelete.push({ uuid: swap.uuid });
     });
 
     it("should return a valid swap", async () => {
