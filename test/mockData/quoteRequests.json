@@ -1,0 +1,32 @@
+[
+    {
+        "pair": "ETHUSDT",
+        "volume": 1,
+        "operation": "BUY"
+    },
+    {
+        "pair": "BTCUSDT",
+        "volume": 0.01,
+        "operation": "BUY"
+    },
+    {
+        "pair": "AAVEUSDC",
+        "volume": 2,
+        "operation": "BUY"
+    },
+    {
+        "pair": "ETHUSDT",
+        "volume": 0.2,
+        "operation": "SELL"
+    },
+    {
+        "pair": "BTCUSDT",
+        "volume": 0.01,
+        "operation": "SELL"
+    },
+    {
+        "pair": "AAVEUSDC",
+        "volume": 2,
+        "operation": "SELL"
+    }
+]

@@ -41,7 +41,7 @@ const createSwap = async (swapRequest: SwapRequest): Promise<Swap> => {
 
     const binanceFee = calculateFee(swapResponses);
 
-    console.log(`Final price for swap was: ${swapResponses[-1].cummulativeQuoteQty}.`);
+    console.debug(`Final price for swap was: ${swapResponses[-1].cummulativeQuoteQty}.`);
 
     const newSwap = {
         quote: quote,

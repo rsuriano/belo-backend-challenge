@@ -10,8 +10,8 @@
       "start": "ts-node src/index.ts",
       "typeorm": "typeorm-ts-node-commonjs",
       "load-initial-data": "ts-node extras/data-loader.ts",
-      "test": "jest",
-      "test_debug": "jest --detectOpenHandles"
+      "test": "jest --silent",
+      "test_debug": "jest --silent --detectOpenHandles"
    },
    "author": "Ramiro Suriano",
    "license": "ISC",

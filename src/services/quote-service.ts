@@ -15,7 +15,7 @@ const BASE_SPREAD = Number(process.env.BASE_SPREAD_PERCENT);
 
 const estimatePairPrice = (quoteRequest: QuoteRequest) => async (lastSegment: RouteSegment, segment: RouteSegment): Promise<RouteSegment> => {
     try {
-        // console.log(`Estimating price for pair ${segment.binancePair}, volume ${quoteRequest.volume}, ${quoteRequest.operation}`);
+        console.debug(`Estimating price for pair ${segment.binancePair}, volume ${quoteRequest.volume}, ${quoteRequest.operation}`);
 
         if (!("volume" in lastSegment && "price" in lastSegment)) {
             throw Error("Error in path price estimation");
@@ -37,7 +37,7 @@ const estimatePairPrice = (quoteRequest: QuoteRequest) => async (lastSegment: Ro
                 volume += Number(item[1]);
 
                 if (volume >= currentSegmentVolume) {
-                    // console.log(`${segment.binancePair} - Matched volume at depth ${ORDER_BOOK_LIMITS[i]}`);
+                    console.debug(`${segment.binancePair} - Matched volume at depth ${ORDER_BOOK_LIMITS[i]}`);
                     break liquidityCheck;
                 }
             }
@@ -85,8 +85,6 @@ const estimateRoutePrice = (quoteRequest: QuoteRequest) => async (route: Route):
         route,
         price: Number(initialSegment.price)
     };
-    // TODO: check this
-    console.log(result);
     return result;
 };
 
@@ -97,7 +95,7 @@ const getCheapestRoute = async (routes: Route[], quoteRequest: QuoteRequest): Pr
 
     const routePrices = await Promise.all(routes.map(estimatePrice));
 
-    console.log(routePrices.map((item) => { return `${item.route.name}: ${utils.roundTwoDecimals(item.price)}`; }));
+    console.debug(routePrices.map((item) => { return `${item.route.name}: ${utils.roundTwoDecimals(item.price)}`; }));
 
     // get cheapest route and return it
     const cheapestRoute = routePrices.reduce(
@@ -107,7 +105,7 @@ const getCheapestRoute = async (routes: Route[], quoteRequest: QuoteRequest): Pr
         routePrices[0]
     );
 
-    console.log(`Cheapest route was "${cheapestRoute.route.name}": $${utils.roundTwoDecimals(cheapestRoute.price)}`);
+    console.debug(`Cheapest route was "${cheapestRoute.route.name}": $${utils.roundTwoDecimals(cheapestRoute.price)}`);
     return cheapestRoute;
 };
 
