@@ -12,7 +12,7 @@ const calculateFee = (swapResponses: BinanceSwapResponse[]) => {
     let finalFees = 0;
 
     for (const response of swapResponses) {
-        finalFees += (response.fills ?? []).reduce((c, i) => (c + i.price), 0);
+        finalFees += (response.fills ?? []).reduce((c, i) => (c + i.commission), 0);
     }
 
     return finalFees;
@@ -41,11 +41,13 @@ const createSwap = async (swapRequest: SwapRequest): Promise<Swap> => {
 
     const binanceFee = calculateFee(swapResponses);
 
-    console.debug(`Final price for swap was: ${swapResponses[-1].cummulativeQuoteQty}.`);
+    const finalPrice = swapResponses[swapResponses.length - 1].cummulativeQuoteQty ?? -1;
+
+    console.debug(`Final price for swap was: ${finalPrice}.`);
 
     const newSwap = {
         quote: quote,
-        finalPrice: Number(swapResponses[-1].cummulativeQuoteQty ?? 0),
+        finalPrice: Number(finalPrice),
         binanceFee: binanceFee,
         binanceResponse: swapResponses
     };
