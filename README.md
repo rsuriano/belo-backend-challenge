@@ -40,7 +40,7 @@ npm run test
 
 ## Endpoints
 
-La API cuenta con tres endpoints, `/api/pairs`, `/api/quote`, y `/api/leads`: 
+La API cuenta con tres endpoints, `/api/pairs`, `/api/quote`, y `/api/swap`: 
 
 ---
 
