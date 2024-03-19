@@ -134,7 +134,7 @@ const createQuote = async (quoteRequest: QuoteRequest): Promise<Quote> => {
 
     // assemble newQuote object
     const newQuote = {
-        pair: pair,
+        pair,
         volume: quoteRequest.volume,
         operation: quoteRequest.operation,
         route: bestRoute.route,
