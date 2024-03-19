@@ -55,5 +55,5 @@ La API cuenta con tres endpoints, `/api/pairs`, `/api/quote`, y `/api/leads`:
 ---
 
 #### `POST` `/swap`
-*Ejecuta el swap en base a una quote generada anteriormente. La quote tiene una expiracion dada por la variable `EXPIRATION_TIME` del `.env`. *
+*Ejecuta el swap en base a una quote generada anteriormente. La quote tiene una expiracion dada por la variable `EXPIRATION_TIME` del `.env`.*
 
