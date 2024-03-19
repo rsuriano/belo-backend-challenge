@@ -14,7 +14,7 @@ Para correr en local:
 
 ```shell
 npm install
-tsc
+npm run tsc
 npm run start
 ```
 
