@@ -28,7 +28,7 @@ Para correr con docker:
 docker-compose up
 ```
 
-Los endpoints de la API se encuentran en la carpeta [requests](request), para correr con la extension REST Client.
+Los endpoints de la API se encuentran en la carpeta [requests](requests), para correr con la extension REST Client.
 
 ##  Tests
 Para correr los tests, correr el siguiente comando, ya sea en local o dentro de la terminal del contenedor:
