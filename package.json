@@ -4,13 +4,13 @@
    "description": "",
    "main": "index.js",
    "scripts": {
-      "start": "ts-node src/index.ts",
-      "dev": "ts-node-dev src/index.ts",
-      "test": "jest --silent",
       "tsc": "tsc",
       "lint": "eslint --ext .ts .",
       "typeorm": "typeorm-ts-node-commonjs",
-      "load-initial-data": "ts-node extras/data-loader.ts"
+      "start": "node build/src/index.js",
+      "dev": "ts-node-dev src/index.ts",
+      "test": "jest --silent",
+      "load-initial-data": "node build/extras/data-loader.js"
    },
    "author": "Ramiro Suriano",
    "license": "ISC",

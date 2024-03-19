@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+
+  app:
+    container_name: backend-belo
+    restart: always
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - belo-network
+
+  postgres:
+    container_name: postgres-belo
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=belochallenge
+    image: postgres
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    volumes:
+      - backendDB:/data/db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - belo-network
+
+volumes:
+  backendDB:
+
+
+networks:
+  belo-network:
+    driver: bridge

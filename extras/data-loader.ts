@@ -25,29 +25,38 @@ type LoadData = { pairs: Pair[], routes: RouteDataWithPairUUID[] };
 async function readAndSaveData() {
     await AppDataSource.initialize();
 
-    const pairRepository = AppDataSource.getRepository(Pair);
-    const routeRepository = AppDataSource.getRepository(Route);
+    try {
+        const pairRepository = AppDataSource.getRepository(Pair);
+        const routeRepository = AppDataSource.getRepository(Route);
 
-    const rawData = fs.readFileSync("extras/initial-data.json", "utf8");
-    const data: LoadData = JSON.parse(rawData) as LoadData;
+        const rawData = fs.readFileSync("extras/initial-data.json", "utf8");
+        const data: LoadData = JSON.parse(rawData) as LoadData;
 
-    // save pairs
-    const pairs = data.pairs.map(pairData => pairRepository.create(pairData));
-    await pairRepository.save(pairs);
+        // save pairs
+        const pairs = data.pairs.map(pairData => pairRepository.create(pairData));
+        await pairRepository.save(pairs);
 
-    // save routes
-    const routes = data.routes.map(routeData => {
-        const route = routeRepository.create({
-            ...routeData,
-            pair: pairs.find(pair => pair.uuid === routeData.pair_uuid)
+        // save routes
+        const routes = data.routes.map(routeData => {
+            const route = routeRepository.create({
+                ...routeData,
+                pair: pairs.find(pair => pair.uuid === routeData.pair_uuid)
+            });
+            return route;
         });
-        return route;
-    });
-    await routeRepository.save(routes);
+        await routeRepository.save(routes);
+    }
 
-    console.log("Pairs and Routes have been saved successfully.");
+    catch {
+        await AppDataSource.destroy();
+    }
+
 }
 
-readAndSaveData().catch(error => {
-    console.error("Failed to read and save data:", error);
-});
+readAndSaveData()
+    .then(() => {
+        console.log("Pairs and Routes have been saved successfully.");
+    })
+    .catch(error => {
+        console.error("Failed to read and save data:", error);
+    });

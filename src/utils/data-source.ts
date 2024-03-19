@@ -6,9 +6,11 @@ import { Pair, Route, Quote, Swap } from "../entity";
 
 dotenv.config();
 
+const DB_HOST = process.env.RUN_MODE === "DOCKER" ? process.env.DB_HOST : "localhost";
+
 export const AppDataSource = new DataSource({
     type: "postgres",
-    host: "localhost",
+    host: DB_HOST,
     port: 5432,
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
