@@ -5,8 +5,6 @@ import dotenv from "dotenv";
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 
-process.env.TEST = "true";
-
 import { connect_db, disconnect_db, AppDataSource } from "../src/utils/data-source";
 import { app } from "../src/app";
 
@@ -97,5 +95,3 @@ describe("POST /swap", () => {
         await disconnect_db();
     });
 });
-
-process.env.TEST = "true";
