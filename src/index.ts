@@ -19,7 +19,6 @@ const PORT = Number(process.env.API_PORT ?? 3000);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`USERDB: ${process.env.DB_USER}`);
 });
 
 export default {
