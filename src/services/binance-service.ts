@@ -86,10 +86,12 @@ const executeSwap = async (quote: Quote): Promise<BinanceSwapResponse[]> => {
             //      -> check for balances using account info endpoint
             //
 
-            // repeat order if it failed
+            // repeat order for a few times if it fails
             // not handling partially filled orders at the moment, as it increases complexity for this project
-            while (newOrder.status !== OrderStatus.FILLED) {
+            let counter = 0;
+            while ((newOrder.status !== OrderStatus.FILLED) && (counter < 3)) {
                 newOrder = await client.newOrder(pair.binancePair, side, OrderType.MARKET, options);
+                counter++;
             }
 
             // create order object for response
