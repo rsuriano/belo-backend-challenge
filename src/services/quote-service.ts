@@ -24,6 +24,7 @@ const estimatePairPrice = (quoteRequest: QuoteRequest) => async (lastSegment: Ro
         const currentSegmentVolume = Number(lastSegment.volume) * Number(lastSegment.price);
         let orderBook: number[][] = [];
         let volume: number = 0;
+        let volumeIndex: number = 0;
 
         // check if volume is ok to estimate price, if not repeat process with a higher depth
         liquidityCheck: for (let i = 0; i < ORDER_BOOK_LIMITS.length; i++) {
@@ -33,18 +34,21 @@ const estimatePairPrice = (quoteRequest: QuoteRequest) => async (lastSegment: Ro
 
             // check if volume is enough for estimation
             volume = 0;
+            volumeIndex = 0;
             for (const item of orderBook) {
                 volume += Number(item[1]);
+                volumeIndex++;
 
                 if (volume >= currentSegmentVolume) {
                     console.debug(`${segment.binancePair} - Matched volume at depth ${ORDER_BOOK_LIMITS[i]}`);
                     break liquidityCheck;
                 }
+
             }
 
         }
 
-        // throw error if there"s no volume for estimation
+        // throw error if there's no volume for estimation
         if (volume <= currentSegmentVolume) {
             const low_volume_msg = `Not enough volume in pair ${segment.binancePair}: ${volume}. try again with a lower volume`;
             console.error(low_volume_msg);
@@ -52,10 +56,16 @@ const estimatePairPrice = (quoteRequest: QuoteRequest) => async (lastSegment: Ro
         }
 
         // estimate price
-        let priceAvg = orderBook.reduce(
-            (prev, curr) => { return prev + Number(curr[0]); }, 0
+        // TODO: add volume to calculation
+        const orderBookSliced = orderBook.slice(0, volumeIndex);
+
+        const totalVolume = orderBookSliced.reduce(
+            (prev, curr) => { return prev + Number(curr[1]); }, 0);
+
+        let priceAvg = orderBookSliced.reduce(
+            (prev, curr) => { return prev + Number(curr[0]) * Number(curr[1]); }, 0
         );
-        priceAvg = priceAvg / orderBook.length;
+        priceAvg = priceAvg / totalVolume;
 
         return {
             ...segment,
